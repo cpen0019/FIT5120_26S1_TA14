@@ -1,47 +1,63 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div class="app">
+    <nav class="navbar">
+      <router-link to="/">Home</router-link>
+      <router-link to="/map">Map</router-link>
+      <router-link to="/awareness">Awareness</router-link>
+    </nav>
 
-    <div class="wrapper">
-      <HelloWorld msg="You made it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <main class="content">
+      <router-view />
+    </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<style>
+* {
+  box-sizing: border-box;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.app {
+  text-align: center;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  padding: 18px;
+  background: white;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.navbar a {
+  text-decoration: none;
+  padding: 8px 16px;
+  color: #2c3e50;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.navbar a:hover {
+  background: #f2f2f2;
+}
+
+.router-link-exact-active {
+  background: #42b983;
+  color: white;
+}
+
+.content {
+  padding-top: 90px;
 }
 </style>
