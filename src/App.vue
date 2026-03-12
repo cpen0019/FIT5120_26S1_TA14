@@ -17,13 +17,22 @@
   box-sizing: border-box;
 }
 
-body {
+html,
+body,
+#app {
+  width: 100%;
+  min-height: 100%;
   margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: Arial, sans-serif;
 }
 
 .app {
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .navbar {
@@ -38,6 +47,7 @@ body {
   background: white;
   font-size: 20px;
   border-bottom: 1px solid #eee;
+  z-index: 1000;
 }
 
 .navbar a {
@@ -58,6 +68,8 @@ body {
 }
 
 .content {
+  width: 100%;
+  min-height: 100vh;
   padding-top: 90px;
 }
 </style>
