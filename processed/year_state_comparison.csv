@@ -1,0 +1,335 @@
+﻿year,state,value
+1982,Australia,2358.67
+1982,New South Wales,867.33
+1982,Queensland,599.33
+1982,South Australia,165.33
+1982,Tasmania,45.33
+1982,Victoria,429.33
+1982,Western Australia,224.67
+1983,Australia,2532.67
+1983,New South Wales,948.67
+1983,Queensland,611.33
+1983,South Australia,178.67
+1983,Tasmania,50.67
+1983,Victoria,480.67
+1983,Western Australia,220.0
+1984,Australia,2696.0
+1984,New South Wales,1000.0
+1984,Queensland,692.67
+1984,South Australia,189.33
+1984,Tasmania,44.0
+1984,Victoria,496.67
+1984,Western Australia,231.33
+1985,Australia,3008.0
+1985,New South Wales,1074.0
+1985,Queensland,724.67
+1985,South Australia,242.0
+1985,Tasmania,53.33
+1985,Victoria,578.67
+1985,Western Australia,280.0
+1986,Australia,3139.33
+1986,Australian Capital Territory,38.0
+1986,New South Wales,1134.67
+1986,Northern Territory,7.33
+1986,Queensland,824.67
+1986,South Australia,237.33
+1986,Tasmania,58.0
+1986,Victoria,552.0
+1986,Western Australia,273.33
+1987,Australia,3708.0
+1987,Australian Capital Territory,46.0
+1987,New South Wales,1406.0
+1987,Northern Territory,8.67
+1987,Queensland,911.33
+1987,South Australia,257.33
+1987,Tasmania,75.33
+1987,Victoria,664.67
+1987,Western Australia,320.67
+1988,Australia,4012.67
+1988,Australian Capital Territory,50.33
+1988,New South Wales,1512.0
+1988,Northern Territory,11.67
+1988,Queensland,912.0
+1988,South Australia,305.33
+1988,Tasmania,86.67
+1988,Victoria,750.67
+1988,Western Australia,365.33
+1989,Australia,3817.33
+1989,Australian Capital Territory,52.67
+1989,New South Wales,1404.67
+1989,Northern Territory,12.67
+1989,Queensland,922.67
+1989,South Australia,290.0
+1989,Tasmania,76.67
+1989,Victoria,739.33
+1989,Western Australia,323.33
+1990,Australia,3892.0
+1990,Australian Capital Territory,53.33
+1990,New South Wales,1408.0
+1990,Northern Territory,14.67
+1990,Queensland,930.0
+1990,South Australia,312.0
+1990,Tasmania,100.67
+1990,Victoria,734.0
+1990,Western Australia,342.0
+1991,Australia,3978.0
+1991,Australian Capital Territory,53.0
+1991,New South Wales,1406.67
+1991,Northern Territory,17.0
+1991,Queensland,943.33
+1991,South Australia,306.67
+1991,Tasmania,95.33
+1991,Victoria,752.67
+1991,Western Australia,402.67
+1992,Australia,4377.33
+1992,Australian Capital Territory,50.67
+1992,New South Wales,1452.0
+1992,Northern Territory,20.67
+1992,Queensland,1048.67
+1992,South Australia,388.0
+1992,Tasmania,84.67
+1992,Victoria,918.67
+1992,Western Australia,407.33
+1993,Australia,4513.33
+1993,Australian Capital Territory,49.33
+1993,New South Wales,1653.33
+1993,Northern Territory,20.67
+1993,Queensland,1017.33
+1993,South Australia,357.33
+1993,Tasmania,92.67
+1993,Victoria,840.67
+1993,Western Australia,476.67
+1994,Australia,4633.33
+1994,Australian Capital Territory,49.33
+1994,New South Wales,1579.33
+1994,Northern Territory,21.33
+1994,Queensland,1084.67
+1994,South Australia,408.67
+1994,Tasmania,102.0
+1994,Victoria,876.67
+1994,Western Australia,516.67
+1995,Australia,4982.67
+1995,Australian Capital Territory,54.0
+1995,New South Wales,1590.0
+1995,Northern Territory,21.33
+1995,Queensland,1212.0
+1995,South Australia,389.33
+1995,Tasmania,122.67
+1995,Victoria,1023.33
+1995,Western Australia,558.0
+1996,Australia,5226.0
+1996,Australian Capital Territory,55.67
+1996,New South Wales,1687.33
+1996,Northern Territory,23.33
+1996,Queensland,1318.0
+1996,South Australia,388.67
+1996,Tasmania,126.0
+1996,Victoria,1122.67
+1996,Western Australia,493.33
+1997,Australia,5631.33
+1997,Australian Capital Territory,62.0
+1997,New South Wales,1863.33
+1997,Northern Territory,23.67
+1997,Queensland,1419.33
+1997,South Australia,442.0
+1997,Tasmania,126.0
+1997,Victoria,1208.0
+1997,Western Australia,461.33
+1998,Australia,5333.33
+1998,Australian Capital Territory,65.0
+1998,New South Wales,1785.33
+1998,Northern Territory,24.67
+1998,Queensland,1425.33
+1998,South Australia,384.67
+1998,Tasmania,113.33
+1998,Victoria,1028.0
+1998,Western Australia,502.67
+1999,Australia,5598.0
+1999,Australian Capital Territory,71.0
+1999,New South Wales,1852.67
+1999,Northern Territory,26.33
+1999,Queensland,1366.67
+1999,South Australia,403.33
+1999,Tasmania,127.33
+1999,Victoria,1112.0
+1999,Western Australia,630.0
+2000,Australia,5810.67
+2000,Australian Capital Territory,69.67
+2000,New South Wales,1883.33
+2000,Northern Territory,30.0
+2000,Queensland,1510.0
+2000,South Australia,409.33
+2000,Tasmania,152.0
+2000,Victoria,1154.0
+2000,Western Australia,602.67
+2001,Australia,5998.0
+2001,Australian Capital Territory,72.67
+2001,New South Wales,2003.33
+2001,Northern Territory,31.33
+2001,Queensland,1566.0
+2001,South Australia,415.33
+2001,Tasmania,139.33
+2001,Victoria,1160.0
+2001,Western Australia,604.67
+2002,Australia,6570.0
+2002,Australian Capital Territory,72.0
+2002,New South Wales,2222.67
+2002,Northern Territory,30.0
+2002,Queensland,1707.33
+2002,South Australia,448.0
+2002,Tasmania,149.33
+2002,Victoria,1220.0
+2002,Western Australia,720.67
+2003,Australia,6402.67
+2003,Australian Capital Territory,72.67
+2003,New South Wales,2179.33
+2003,Northern Territory,32.67
+2003,Queensland,1626.0
+2003,South Australia,442.67
+2003,Tasmania,144.67
+2003,Victoria,1172.67
+2003,Western Australia,726.67
+2004,Australia,6584.0
+2004,Australian Capital Territory,75.33
+2004,New South Wales,2306.67
+2004,Northern Territory,33.33
+2004,Queensland,1582.0
+2004,South Australia,450.0
+2004,Tasmania,144.67
+2004,Victoria,1313.33
+2004,Western Australia,663.33
+2005,Australia,7218.67
+2005,Australian Capital Territory,86.67
+2005,New South Wales,2375.33
+2005,Northern Territory,32.67
+2005,Queensland,1806.67
+2005,South Australia,484.67
+2005,Tasmania,189.33
+2005,Victoria,1540.67
+2005,Western Australia,670.0
+2006,Australia,6954.67
+2006,Australian Capital Territory,89.0
+2006,New South Wales,2384.67
+2006,Northern Territory,32.0
+2006,Queensland,1676.67
+2006,South Australia,416.67
+2006,Tasmania,167.33
+2006,Victoria,1462.67
+2006,Western Australia,728.67
+2007,Australia,6960.0
+2007,Australian Capital Territory,87.33
+2007,New South Wales,2364.67
+2007,Northern Territory,33.33
+2007,Queensland,1812.67
+2007,South Australia,414.67
+2007,Tasmania,158.0
+2007,Victoria,1449.33
+2007,Western Australia,658.0
+2008,Australia,7424.0
+2008,Australian Capital Territory,92.33
+2008,New South Wales,2428.67
+2008,Northern Territory,32.67
+2008,Queensland,1979.33
+2008,South Australia,492.0
+2008,Tasmania,184.67
+2008,Victoria,1485.33
+2008,Western Australia,724.0
+2009,Australia,7541.33
+2009,Australian Capital Territory,89.67
+2009,New South Wales,2482.67
+2009,Northern Territory,33.33
+2009,Queensland,2035.33
+2009,South Australia,446.67
+2009,Tasmania,183.33
+2009,Victoria,1586.67
+2009,Western Australia,692.67
+2010,Australia,7675.33
+2010,Australian Capital Territory,82.67
+2010,New South Wales,2598.67
+2010,Northern Territory,35.33
+2010,Queensland,2078.0
+2010,South Australia,466.0
+2010,Tasmania,194.67
+2010,Victoria,1517.33
+2010,Western Australia,692.67
+2011,Australia,7763.33
+2011,Australian Capital Territory,82.67
+2011,New South Wales,2676.0
+2011,Northern Territory,36.67
+2011,Queensland,2204.0
+2011,South Australia,462.67
+2011,Tasmania,174.0
+2011,Victoria,1381.33
+2011,Western Australia,744.0
+2012,Australia,8159.33
+2012,Australian Capital Territory,88.33
+2012,New South Wales,2792.0
+2012,Northern Territory,40.0
+2012,Queensland,2296.67
+2012,South Australia,466.0
+2012,Tasmania,170.0
+2012,Victoria,1518.67
+2012,Western Australia,766.0
+2013,Australia,8582.0
+2013,Australian Capital Territory,90.0
+2013,New South Wales,2871.33
+2013,Northern Territory,42.0
+2013,Queensland,2464.0
+2013,South Australia,482.67
+2013,Tasmania,182.67
+2013,Victoria,1552.67
+2013,Western Australia,880.0
+2014,Australia,8802.67
+2014,Australian Capital Territory,96.0
+2014,New South Wales,2903.33
+2014,Northern Territory,45.33
+2014,Queensland,2473.33
+2014,South Australia,530.0
+2014,Tasmania,221.33
+2014,Victoria,1643.33
+2014,Western Australia,870.67
+2015,Australia,9150.0
+2015,Australian Capital Territory,102.33
+2015,New South Wales,2906.0
+2015,Northern Territory,50.0
+2015,Queensland,2504.0
+2015,South Australia,512.67
+2015,Tasmania,201.33
+2015,Victoria,1795.33
+2015,Western Australia,1046.67
+2016,Australia,9691.33
+2016,Australian Capital Territory,111.33
+2016,New South Wales,3188.67
+2016,Northern Territory,54.67
+2016,Queensland,2642.67
+2016,South Australia,537.33
+2016,Tasmania,222.67
+2016,Victoria,1881.33
+2016,Western Australia,1030.0
+2017,Australia,9974.67
+2017,Australian Capital Territory,122.67
+2017,New South Wales,3280.0
+2017,Northern Territory,54.0
+2017,Queensland,2766.67
+2017,South Australia,535.33
+2017,Tasmania,226.0
+2017,Victoria,1988.0
+2017,Western Australia,974.67
+2018,Australia,10089.67
+2018,Australian Capital Territory,130.0
+2018,New South Wales,3337.33
+2018,Northern Territory,55.0
+2018,Queensland,2718.67
+2018,South Australia,526.0
+2018,Tasmania,267.33
+2018,Victoria,2049.67
+2018,Western Australia,992.67
+2019,Australia,10418.67
+2019,Australian Capital Territory,137.0
+2019,New South Wales,3385.33
+2019,Northern Territory,58.67
+2019,Queensland,2964.67
+2019,South Australia,602.67
+2019,Tasmania,274.67
+2019,Victoria,1888.0
+2019,Western Australia,1086.0

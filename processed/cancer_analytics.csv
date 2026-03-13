@@ -1,0 +1,889 @@
+﻿state,year,sex,cases
+New South Wales,1982,Females,651.0
+Victoria,1982,Females,365.0
+Queensland,1982,Females,427.0
+Western Australia,1982,Females,173.0
+South Australia,1982,Females,127.0
+Tasmania,1982,Females,38.0
+New South Wales,1982,Males,650.0
+Victoria,1982,Males,279.0
+Queensland,1982,Males,472.0
+Western Australia,1982,Males,164.0
+South Australia,1982,Males,121.0
+Tasmania,1982,Males,30.0
+New South Wales,1982,Persons,1301.0
+Victoria,1982,Persons,644.0
+Queensland,1982,Persons,899.0
+Western Australia,1982,Persons,337.0
+South Australia,1982,Persons,248.0
+Tasmania,1982,Persons,68.0
+New South Wales,1983,Females,730.0
+Victoria,1983,Females,402.0
+Queensland,1983,Females,461.0
+Western Australia,1983,Females,165.0
+South Australia,1983,Females,148.0
+Tasmania,1983,Females,45.0
+New South Wales,1983,Males,693.0
+Victoria,1983,Males,319.0
+Queensland,1983,Males,456.0
+Western Australia,1983,Males,165.0
+South Australia,1983,Males,120.0
+Tasmania,1983,Males,31.0
+New South Wales,1983,Persons,1423.0
+Victoria,1983,Persons,721.0
+Queensland,1983,Persons,917.0
+Western Australia,1983,Persons,330.0
+South Australia,1983,Persons,268.0
+Tasmania,1983,Persons,76.0
+New South Wales,1984,Females,738.0
+Victoria,1984,Females,414.0
+Queensland,1984,Females,504.0
+Western Australia,1984,Females,174.0
+South Australia,1984,Females,160.0
+Tasmania,1984,Females,35.0
+New South Wales,1984,Males,762.0
+Victoria,1984,Males,331.0
+Queensland,1984,Males,535.0
+Western Australia,1984,Males,173.0
+South Australia,1984,Males,124.0
+Tasmania,1984,Males,31.0
+New South Wales,1984,Persons,1500.0
+Victoria,1984,Persons,745.0
+Queensland,1984,Persons,1039.0
+Western Australia,1984,Persons,347.0
+South Australia,1984,Persons,284.0
+Tasmania,1984,Persons,66.0
+New South Wales,1985,Females,780.0
+Victoria,1985,Females,472.0
+Queensland,1985,Females,540.0
+Western Australia,1985,Females,208.0
+South Australia,1985,Females,198.0
+Tasmania,1985,Females,49.0
+New South Wales,1985,Males,831.0
+Victoria,1985,Males,396.0
+Queensland,1985,Males,547.0
+Western Australia,1985,Males,212.0
+South Australia,1985,Males,165.0
+Tasmania,1985,Males,31.0
+New South Wales,1985,Persons,1611.0
+Victoria,1985,Persons,868.0
+Queensland,1985,Persons,1087.0
+Western Australia,1985,Persons,420.0
+South Australia,1985,Persons,363.0
+Tasmania,1985,Persons,80.0
+New South Wales,1986,Females,787.0
+Victoria,1986,Females,452.0
+Queensland,1986,Females,598.0
+Western Australia,1986,Females,184.0
+South Australia,1986,Females,188.0
+Tasmania,1986,Females,54.0
+Australian Capital Territory,1986,Females,27.0
+Northern Territory,1986,Females,5.0
+New South Wales,1986,Males,915.0
+Victoria,1986,Males,376.0
+Queensland,1986,Males,639.0
+Western Australia,1986,Males,226.0
+South Australia,1986,Males,168.0
+Tasmania,1986,Males,33.0
+Australian Capital Territory,1986,Males,30.0
+Northern Territory,1986,Males,6.0
+New South Wales,1986,Persons,1702.0
+Victoria,1986,Persons,828.0
+Queensland,1986,Persons,1237.0
+Western Australia,1986,Persons,410.0
+South Australia,1986,Persons,356.0
+Tasmania,1986,Persons,87.0
+Australian Capital Territory,1986,Persons,57.0
+Northern Territory,1986,Persons,11.0
+New South Wales,1987,Females,1004.0
+Victoria,1987,Females,516.0
+Queensland,1987,Females,629.0
+Western Australia,1987,Females,214.0
+South Australia,1987,Females,201.0
+Tasmania,1987,Females,68.0
+Australian Capital Territory,1987,Females,33.0
+Northern Territory,1987,Females,5.0
+New South Wales,1987,Males,1105.0
+Victoria,1987,Males,481.0
+Queensland,1987,Males,738.0
+Western Australia,1987,Males,267.0
+South Australia,1987,Males,185.0
+Tasmania,1987,Males,45.0
+Australian Capital Territory,1987,Males,36.0
+Northern Territory,1987,Males,8.0
+New South Wales,1987,Persons,2109.0
+Victoria,1987,Persons,997.0
+Queensland,1987,Persons,1367.0
+Western Australia,1987,Persons,481.0
+South Australia,1987,Persons,386.0
+Tasmania,1987,Persons,113.0
+Australian Capital Territory,1987,Persons,69.0
+Northern Territory,1987,Persons,13.0
+New South Wales,1988,Females,1042.0
+Victoria,1988,Females,564.0
+Queensland,1988,Females,615.0
+Western Australia,1988,Females,250.0
+South Australia,1988,Females,227.0
+Tasmania,1988,Females,68.0
+Australian Capital Territory,1988,Females,35.0
+Northern Territory,1988,Females,8.0
+New South Wales,1988,Males,1226.0
+Victoria,1988,Males,562.0
+Queensland,1988,Males,753.0
+Western Australia,1988,Males,298.0
+South Australia,1988,Males,231.0
+Tasmania,1988,Males,62.0
+Australian Capital Territory,1988,Males,40.0
+Northern Territory,1988,Males,10.0
+New South Wales,1988,Persons,2268.0
+Victoria,1988,Persons,1126.0
+Queensland,1988,Persons,1368.0
+Western Australia,1988,Persons,548.0
+South Australia,1988,Persons,458.0
+Tasmania,1988,Persons,130.0
+Australian Capital Territory,1988,Persons,76.0
+Northern Territory,1988,Persons,17.0
+New South Wales,1989,Females,892.0
+Victoria,1989,Females,561.0
+Queensland,1989,Females,638.0
+Western Australia,1989,Females,222.0
+South Australia,1989,Females,199.0
+Tasmania,1989,Females,62.0
+Australian Capital Territory,1989,Females,38.0
+Northern Territory,1989,Females,8.0
+New South Wales,1989,Males,1215.0
+Victoria,1989,Males,548.0
+Queensland,1989,Males,746.0
+Western Australia,1989,Males,263.0
+South Australia,1989,Males,236.0
+Tasmania,1989,Males,53.0
+Australian Capital Territory,1989,Males,41.0
+Northern Territory,1989,Males,11.0
+New South Wales,1989,Persons,2107.0
+Victoria,1989,Persons,1109.0
+Queensland,1989,Persons,1384.0
+Western Australia,1989,Persons,485.0
+South Australia,1989,Persons,435.0
+Tasmania,1989,Persons,115.0
+Australian Capital Territory,1989,Persons,79.0
+Northern Territory,1989,Persons,19.0
+New South Wales,1990,Females,944.0
+Victoria,1990,Females,522.0
+Queensland,1990,Females,630.0
+Western Australia,1990,Females,216.0
+South Australia,1990,Females,247.0
+Tasmania,1990,Females,85.0
+Australian Capital Territory,1990,Females,38.0
+Northern Territory,1990,Females,9.0
+New South Wales,1990,Males,1168.0
+Victoria,1990,Males,579.0
+Queensland,1990,Males,765.0
+Western Australia,1990,Males,297.0
+South Australia,1990,Males,221.0
+Tasmania,1990,Males,66.0
+Australian Capital Territory,1990,Males,42.0
+Northern Territory,1990,Males,13.0
+New South Wales,1990,Persons,2112.0
+Victoria,1990,Persons,1101.0
+Queensland,1990,Persons,1395.0
+Western Australia,1990,Persons,513.0
+South Australia,1990,Persons,468.0
+Tasmania,1990,Persons,151.0
+Australian Capital Territory,1990,Persons,80.0
+Northern Territory,1990,Persons,22.0
+New South Wales,1991,Females,959.0
+Victoria,1991,Females,571.0
+Queensland,1991,Females,644.0
+Western Australia,1991,Females,268.0
+South Australia,1991,Females,225.0
+Tasmania,1991,Females,68.0
+Australian Capital Territory,1991,Females,38.0
+Northern Territory,1991,Females,10.0
+New South Wales,1991,Males,1151.0
+Victoria,1991,Males,558.0
+Queensland,1991,Males,771.0
+Western Australia,1991,Males,336.0
+South Australia,1991,Males,235.0
+Tasmania,1991,Males,75.0
+Australian Capital Territory,1991,Males,42.0
+Northern Territory,1991,Males,15.0
+New South Wales,1991,Persons,2110.0
+Victoria,1991,Persons,1129.0
+Queensland,1991,Persons,1415.0
+Western Australia,1991,Persons,604.0
+South Australia,1991,Persons,460.0
+Tasmania,1991,Persons,143.0
+Australian Capital Territory,1991,Persons,79.0
+Northern Territory,1991,Persons,26.0
+New South Wales,1992,Females,978.0
+Victoria,1992,Females,667.0
+Queensland,1992,Females,687.0
+Western Australia,1992,Females,254.0
+South Australia,1992,Females,286.0
+Tasmania,1992,Females,58.0
+Australian Capital Territory,1992,Females,36.0
+Northern Territory,1992,Females,12.0
+New South Wales,1992,Males,1200.0
+Victoria,1992,Males,711.0
+Queensland,1992,Males,886.0
+Western Australia,1992,Males,357.0
+South Australia,1992,Males,296.0
+Tasmania,1992,Males,69.0
+Australian Capital Territory,1992,Males,40.0
+Northern Territory,1992,Males,19.0
+New South Wales,1992,Persons,2178.0
+Victoria,1992,Persons,1378.0
+Queensland,1992,Persons,1573.0
+Western Australia,1992,Persons,611.0
+South Australia,1992,Persons,582.0
+Tasmania,1992,Persons,127.0
+Australian Capital Territory,1992,Persons,76.0
+Northern Territory,1992,Persons,31.0
+New South Wales,1993,Females,1052.0
+Victoria,1993,Females,608.0
+Queensland,1993,Females,665.0
+Western Australia,1993,Females,332.0
+South Australia,1993,Females,270.0
+Tasmania,1993,Females,71.0
+Australian Capital Territory,1993,Females,36.0
+Northern Territory,1993,Females,12.0
+New South Wales,1993,Males,1428.0
+Victoria,1993,Males,653.0
+Queensland,1993,Males,861.0
+Western Australia,1993,Males,383.0
+South Australia,1993,Males,266.0
+Tasmania,1993,Males,68.0
+Australian Capital Territory,1993,Males,38.0
+Northern Territory,1993,Males,19.0
+New South Wales,1993,Persons,2480.0
+Victoria,1993,Persons,1261.0
+Queensland,1993,Persons,1526.0
+Western Australia,1993,Persons,715.0
+South Australia,1993,Persons,536.0
+Tasmania,1993,Persons,139.0
+Australian Capital Territory,1993,Persons,74.0
+Northern Territory,1993,Persons,31.0
+New South Wales,1994,Females,1018.0
+Victoria,1994,Females,632.0
+Queensland,1994,Females,702.0
+Western Australia,1994,Females,351.0
+South Australia,1994,Females,303.0
+Tasmania,1994,Females,72.0
+Australian Capital Territory,1994,Females,35.0
+Northern Territory,1994,Females,13.0
+New South Wales,1994,Males,1351.0
+Victoria,1994,Males,683.0
+Queensland,1994,Males,925.0
+Western Australia,1994,Males,424.0
+South Australia,1994,Males,310.0
+Tasmania,1994,Males,81.0
+Australian Capital Territory,1994,Males,39.0
+Northern Territory,1994,Males,19.0
+New South Wales,1994,Persons,2369.0
+Victoria,1994,Persons,1315.0
+Queensland,1994,Persons,1627.0
+Western Australia,1994,Persons,775.0
+South Australia,1994,Persons,613.0
+Tasmania,1994,Persons,153.0
+Australian Capital Territory,1994,Persons,74.0
+Northern Territory,1994,Persons,32.0
+New South Wales,1995,Females,963.0
+Victoria,1995,Females,765.0
+Queensland,1995,Females,783.0
+Western Australia,1995,Females,358.0
+South Australia,1995,Females,296.0
+Tasmania,1995,Females,92.0
+Australian Capital Territory,1995,Females,38.0
+Northern Territory,1995,Females,14.0
+New South Wales,1995,Males,1422.0
+Victoria,1995,Males,770.0
+Queensland,1995,Males,1035.0
+Western Australia,1995,Males,479.0
+South Australia,1995,Males,288.0
+Tasmania,1995,Males,92.0
+Australian Capital Territory,1995,Males,43.0
+Northern Territory,1995,Males,18.0
+New South Wales,1995,Persons,2385.0
+Victoria,1995,Persons,1535.0
+Queensland,1995,Persons,1818.0
+Western Australia,1995,Persons,837.0
+South Australia,1995,Persons,584.0
+Tasmania,1995,Persons,184.0
+Australian Capital Territory,1995,Persons,81.0
+Northern Territory,1995,Persons,32.0
+New South Wales,1996,Females,1069.0
+Victoria,1996,Females,820.0
+Queensland,1996,Females,864.0
+Western Australia,1996,Females,310.0
+South Australia,1996,Females,272.0
+Tasmania,1996,Females,95.0
+Australian Capital Territory,1996,Females,39.0
+Northern Territory,1996,Females,15.0
+New South Wales,1996,Males,1462.0
+Victoria,1996,Males,864.0
+Queensland,1996,Males,1113.0
+Western Australia,1996,Males,430.0
+South Australia,1996,Males,311.0
+Tasmania,1996,Males,94.0
+Australian Capital Territory,1996,Males,44.0
+Northern Territory,1996,Males,20.0
+New South Wales,1996,Persons,2531.0
+Victoria,1996,Persons,1684.0
+Queensland,1996,Persons,1977.0
+Western Australia,1996,Persons,740.0
+South Australia,1996,Persons,583.0
+Tasmania,1996,Persons,189.0
+Australian Capital Territory,1996,Persons,84.0
+Northern Territory,1996,Persons,35.0
+New South Wales,1997,Females,1162.0
+Victoria,1997,Females,913.0
+Queensland,1997,Females,893.0
+Western Australia,1997,Females,294.0
+South Australia,1997,Females,319.0
+Tasmania,1997,Females,98.0
+Australian Capital Territory,1997,Females,42.0
+Northern Territory,1997,Females,16.0
+New South Wales,1997,Males,1633.0
+Victoria,1997,Males,899.0
+Queensland,1997,Males,1236.0
+Western Australia,1997,Males,398.0
+South Australia,1997,Males,344.0
+Tasmania,1997,Males,91.0
+Australian Capital Territory,1997,Males,51.0
+Northern Territory,1997,Males,19.0
+New South Wales,1997,Persons,2795.0
+Victoria,1997,Persons,1812.0
+Queensland,1997,Persons,2129.0
+Western Australia,1997,Persons,692.0
+South Australia,1997,Persons,663.0
+Tasmania,1997,Persons,189.0
+Australian Capital Territory,1997,Persons,93.0
+Northern Territory,1997,Persons,36.0
+New South Wales,1998,Females,1120.0
+Victoria,1998,Females,751.0
+Queensland,1998,Females,908.0
+Western Australia,1998,Females,327.0
+South Australia,1998,Females,276.0
+Tasmania,1998,Females,84.0
+Australian Capital Territory,1998,Females,42.0
+Northern Territory,1998,Females,15.0
+New South Wales,1998,Males,1558.0
+Victoria,1998,Males,791.0
+Queensland,1998,Males,1230.0
+Western Australia,1998,Males,427.0
+South Australia,1998,Males,301.0
+Tasmania,1998,Males,86.0
+Australian Capital Territory,1998,Males,56.0
+Northern Territory,1998,Males,22.0
+New South Wales,1998,Persons,2678.0
+Victoria,1998,Persons,1542.0
+Queensland,1998,Persons,2138.0
+Western Australia,1998,Persons,754.0
+South Australia,1998,Persons,577.0
+Tasmania,1998,Persons,170.0
+Australian Capital Territory,1998,Persons,97.0
+Northern Territory,1998,Persons,37.0
+New South Wales,1999,Females,1129.0
+Victoria,1999,Females,784.0
+Queensland,1999,Females,898.0
+Western Australia,1999,Females,395.0
+South Australia,1999,Females,288.0
+Tasmania,1999,Females,102.0
+Australian Capital Territory,1999,Females,45.0
+Northern Territory,1999,Females,16.0
+New South Wales,1999,Males,1650.0
+Victoria,1999,Males,884.0
+Queensland,1999,Males,1152.0
+Western Australia,1999,Males,550.0
+South Australia,1999,Males,317.0
+Tasmania,1999,Males,89.0
+Australian Capital Territory,1999,Males,61.0
+Northern Territory,1999,Males,24.0
+New South Wales,1999,Persons,2779.0
+Victoria,1999,Persons,1668.0
+Queensland,1999,Persons,2050.0
+Western Australia,1999,Persons,945.0
+South Australia,1999,Persons,605.0
+Tasmania,1999,Persons,191.0
+Australian Capital Territory,1999,Persons,107.0
+Northern Territory,1999,Persons,39.0
+New South Wales,2000,Females,1189.0
+Victoria,2000,Females,839.0
+Queensland,2000,Females,964.0
+Western Australia,2000,Females,372.0
+South Australia,2000,Females,275.0
+Tasmania,2000,Females,118.0
+Australian Capital Territory,2000,Females,43.0
+Northern Territory,2000,Females,19.0
+New South Wales,2000,Males,1636.0
+Victoria,2000,Males,892.0
+Queensland,2000,Males,1301.0
+Western Australia,2000,Males,532.0
+South Australia,2000,Males,339.0
+Tasmania,2000,Males,110.0
+Australian Capital Territory,2000,Males,61.0
+Northern Territory,2000,Males,26.0
+New South Wales,2000,Persons,2825.0
+Victoria,2000,Persons,1731.0
+Queensland,2000,Persons,2265.0
+Western Australia,2000,Persons,904.0
+South Australia,2000,Persons,614.0
+Tasmania,2000,Persons,228.0
+Australian Capital Territory,2000,Persons,105.0
+Northern Territory,2000,Persons,45.0
+New South Wales,2001,Females,1245.0
+Victoria,2001,Females,813.0
+Queensland,2001,Females,992.0
+Western Australia,2001,Females,396.0
+South Australia,2001,Females,254.0
+Tasmania,2001,Females,106.0
+Australian Capital Territory,2001,Females,48.0
+Northern Territory,2001,Females,21.0
+New South Wales,2001,Males,1760.0
+Victoria,2001,Males,927.0
+Queensland,2001,Males,1357.0
+Western Australia,2001,Males,511.0
+South Australia,2001,Males,369.0
+Tasmania,2001,Males,103.0
+Australian Capital Territory,2001,Males,61.0
+Northern Territory,2001,Males,26.0
+New South Wales,2001,Persons,3005.0
+Victoria,2001,Persons,1740.0
+Queensland,2001,Persons,2349.0
+Western Australia,2001,Persons,907.0
+South Australia,2001,Persons,623.0
+Tasmania,2001,Persons,209.0
+Australian Capital Territory,2001,Persons,109.0
+Northern Territory,2001,Persons,47.0
+New South Wales,2002,Females,1347.0
+Victoria,2002,Females,834.0
+Queensland,2002,Females,1096.0
+Western Australia,2002,Females,444.0
+South Australia,2002,Females,333.0
+Tasmania,2002,Females,109.0
+Australian Capital Territory,2002,Females,49.0
+Northern Territory,2002,Females,20.0
+New South Wales,2002,Males,1987.0
+Victoria,2002,Males,996.0
+Queensland,2002,Males,1465.0
+Western Australia,2002,Males,637.0
+South Australia,2002,Males,339.0
+Tasmania,2002,Males,115.0
+Australian Capital Territory,2002,Males,59.0
+Northern Territory,2002,Males,25.0
+New South Wales,2002,Persons,3334.0
+Victoria,2002,Persons,1830.0
+Queensland,2002,Persons,2561.0
+Western Australia,2002,Persons,1081.0
+South Australia,2002,Persons,672.0
+Tasmania,2002,Persons,224.0
+Australian Capital Territory,2002,Persons,108.0
+Northern Territory,2002,Persons,45.0
+New South Wales,2003,Females,1370.0
+Victoria,2003,Females,774.0
+Queensland,2003,Females,1017.0
+Western Australia,2003,Females,416.0
+South Australia,2003,Females,287.0
+Tasmania,2003,Females,98.0
+Australian Capital Territory,2003,Females,50.0
+Northern Territory,2003,Females,22.0
+New South Wales,2003,Males,1899.0
+Victoria,2003,Males,985.0
+Queensland,2003,Males,1422.0
+Western Australia,2003,Males,674.0
+South Australia,2003,Males,377.0
+Tasmania,2003,Males,119.0
+Australian Capital Territory,2003,Males,59.0
+Northern Territory,2003,Males,27.0
+New South Wales,2003,Persons,3269.0
+Victoria,2003,Persons,1759.0
+Queensland,2003,Persons,2439.0
+Western Australia,2003,Persons,1090.0
+South Australia,2003,Persons,664.0
+Tasmania,2003,Persons,217.0
+Australian Capital Territory,2003,Persons,109.0
+Northern Territory,2003,Persons,49.0
+New South Wales,2004,Females,1459.0
+Victoria,2004,Females,877.0
+Queensland,2004,Females,1050.0
+Western Australia,2004,Females,414.0
+South Australia,2004,Females,292.0
+Tasmania,2004,Females,100.0
+Australian Capital Territory,2004,Females,53.0
+Northern Territory,2004,Females,22.0
+New South Wales,2004,Males,2001.0
+Victoria,2004,Males,1093.0
+Queensland,2004,Males,1323.0
+Western Australia,2004,Males,581.0
+South Australia,2004,Males,383.0
+Tasmania,2004,Males,117.0
+Australian Capital Territory,2004,Males,60.0
+Northern Territory,2004,Males,28.0
+New South Wales,2004,Persons,3460.0
+Victoria,2004,Persons,1970.0
+Queensland,2004,Persons,2373.0
+Western Australia,2004,Persons,995.0
+South Australia,2004,Persons,675.0
+Tasmania,2004,Persons,217.0
+Australian Capital Territory,2004,Persons,113.0
+Northern Territory,2004,Persons,50.0
+New South Wales,2005,Females,1506.0
+Victoria,2005,Females,1082.0
+Queensland,2005,Females,1130.0
+Western Australia,2005,Females,407.0
+South Australia,2005,Females,328.0
+Tasmania,2005,Females,136.0
+Australian Capital Territory,2005,Females,61.0
+Northern Territory,2005,Females,20.0
+New South Wales,2005,Males,2057.0
+Victoria,2005,Males,1229.0
+Queensland,2005,Males,1580.0
+Western Australia,2005,Males,598.0
+South Australia,2005,Males,399.0
+Tasmania,2005,Males,148.0
+Australian Capital Territory,2005,Males,69.0
+Northern Territory,2005,Males,29.0
+New South Wales,2005,Persons,3563.0
+Victoria,2005,Persons,2311.0
+Queensland,2005,Persons,2710.0
+Western Australia,2005,Persons,1005.0
+South Australia,2005,Persons,727.0
+Tasmania,2005,Persons,284.0
+Australian Capital Territory,2005,Persons,130.0
+Northern Territory,2005,Persons,49.0
+New South Wales,2006,Females,1397.0
+Victoria,2006,Females,974.0
+Queensland,2006,Females,1027.0
+Western Australia,2006,Females,458.0
+South Australia,2006,Females,265.0
+Tasmania,2006,Females,124.0
+Australian Capital Territory,2006,Females,61.0
+Northern Territory,2006,Females,19.0
+New South Wales,2006,Males,2180.0
+Victoria,2006,Males,1220.0
+Queensland,2006,Males,1488.0
+Western Australia,2006,Males,635.0
+South Australia,2006,Males,360.0
+Tasmania,2006,Males,127.0
+Australian Capital Territory,2006,Males,73.0
+Northern Territory,2006,Males,29.0
+New South Wales,2006,Persons,3577.0
+Victoria,2006,Persons,2194.0
+Queensland,2006,Persons,2515.0
+Western Australia,2006,Persons,1093.0
+South Australia,2006,Persons,625.0
+Tasmania,2006,Persons,251.0
+Australian Capital Territory,2006,Persons,133.0
+Northern Territory,2006,Persons,48.0
+New South Wales,2007,Females,1420.0
+Victoria,2007,Females,986.0
+Queensland,2007,Females,1127.0
+Western Australia,2007,Females,411.0
+South Australia,2007,Females,280.0
+Tasmania,2007,Females,110.0
+Australian Capital Territory,2007,Females,59.0
+Northern Territory,2007,Females,20.0
+New South Wales,2007,Males,2127.0
+Victoria,2007,Males,1188.0
+Queensland,2007,Males,1592.0
+Western Australia,2007,Males,576.0
+South Australia,2007,Males,342.0
+Tasmania,2007,Males,127.0
+Australian Capital Territory,2007,Males,72.0
+Northern Territory,2007,Males,30.0
+New South Wales,2007,Persons,3547.0
+Victoria,2007,Persons,2174.0
+Queensland,2007,Persons,2719.0
+Western Australia,2007,Persons,987.0
+South Australia,2007,Persons,622.0
+Tasmania,2007,Persons,237.0
+Australian Capital Territory,2007,Persons,131.0
+Northern Territory,2007,Persons,50.0
+New South Wales,2008,Females,1489.0
+Victoria,2008,Females,981.0
+Queensland,2008,Females,1196.0
+Western Australia,2008,Females,425.0
+South Australia,2008,Females,325.0
+Tasmania,2008,Females,114.0
+Australian Capital Territory,2008,Females,62.0
+Northern Territory,2008,Females,20.0
+New South Wales,2008,Males,2154.0
+Victoria,2008,Males,1247.0
+Queensland,2008,Males,1773.0
+Western Australia,2008,Males,661.0
+South Australia,2008,Males,413.0
+Tasmania,2008,Males,163.0
+Australian Capital Territory,2008,Males,76.0
+Northern Territory,2008,Males,29.0
+New South Wales,2008,Persons,3643.0
+Victoria,2008,Persons,2228.0
+Queensland,2008,Persons,2969.0
+Western Australia,2008,Persons,1086.0
+South Australia,2008,Persons,738.0
+Tasmania,2008,Persons,277.0
+Australian Capital Territory,2008,Persons,139.0
+Northern Territory,2008,Persons,49.0
+New South Wales,2009,Females,1534.0
+Victoria,2009,Females,1047.0
+Queensland,2009,Females,1267.0
+Western Australia,2009,Females,399.0
+South Australia,2009,Females,289.0
+Tasmania,2009,Females,115.0
+Australian Capital Territory,2009,Females,57.0
+Northern Territory,2009,Females,20.0
+New South Wales,2009,Males,2190.0
+Victoria,2009,Males,1333.0
+Queensland,2009,Males,1786.0
+Western Australia,2009,Males,640.0
+South Australia,2009,Males,381.0
+Tasmania,2009,Males,160.0
+Australian Capital Territory,2009,Males,77.0
+Northern Territory,2009,Males,30.0
+New South Wales,2009,Persons,3724.0
+Victoria,2009,Persons,2380.0
+Queensland,2009,Persons,3053.0
+Western Australia,2009,Persons,1039.0
+South Australia,2009,Persons,670.0
+Tasmania,2009,Persons,275.0
+Australian Capital Territory,2009,Persons,135.0
+Northern Territory,2009,Persons,50.0
+New South Wales,2010,Females,1563.0
+Victoria,2010,Females,972.0
+Queensland,2010,Females,1270.0
+Western Australia,2010,Females,389.0
+South Australia,2010,Females,313.0
+Tasmania,2010,Females,134.0
+Australian Capital Territory,2010,Females,50.0
+Northern Territory,2010,Females,21.0
+New South Wales,2010,Males,2335.0
+Victoria,2010,Males,1304.0
+Queensland,2010,Males,1847.0
+Western Australia,2010,Males,650.0
+South Australia,2010,Males,386.0
+Tasmania,2010,Males,158.0
+Australian Capital Territory,2010,Males,74.0
+Northern Territory,2010,Males,32.0
+New South Wales,2010,Persons,3898.0
+Victoria,2010,Persons,2276.0
+Queensland,2010,Persons,3117.0
+Western Australia,2010,Persons,1039.0
+South Australia,2010,Persons,699.0
+Tasmania,2010,Persons,292.0
+Australian Capital Territory,2010,Persons,124.0
+Northern Territory,2010,Persons,53.0
+New South Wales,2011,Females,1616.0
+Victoria,2011,Females,900.0
+Queensland,2011,Females,1381.0
+Western Australia,2011,Females,449.0
+South Australia,2011,Females,290.0
+Tasmania,2011,Females,129.0
+Australian Capital Territory,2011,Females,48.0
+Northern Territory,2011,Females,22.0
+New South Wales,2011,Males,2398.0
+Victoria,2011,Males,1172.0
+Queensland,2011,Males,1925.0
+Western Australia,2011,Males,667.0
+South Australia,2011,Males,404.0
+Tasmania,2011,Males,132.0
+Australian Capital Territory,2011,Males,76.0
+Northern Territory,2011,Males,33.0
+New South Wales,2011,Persons,4014.0
+Victoria,2011,Persons,2072.0
+Queensland,2011,Persons,3306.0
+Western Australia,2011,Persons,1116.0
+South Australia,2011,Persons,694.0
+Tasmania,2011,Persons,261.0
+Australian Capital Territory,2011,Persons,124.0
+Northern Territory,2011,Persons,55.0
+New South Wales,2012,Females,1699.0
+Victoria,2012,Females,987.0
+Queensland,2012,Females,1428.0
+Western Australia,2012,Females,453.0
+South Australia,2012,Females,305.0
+Tasmania,2012,Females,109.0
+Australian Capital Territory,2012,Females,54.0
+Northern Territory,2012,Females,23.0
+New South Wales,2012,Males,2489.0
+Victoria,2012,Males,1291.0
+Queensland,2012,Males,2017.0
+Western Australia,2012,Males,696.0
+South Australia,2012,Males,394.0
+Tasmania,2012,Males,146.0
+Australian Capital Territory,2012,Males,79.0
+Northern Territory,2012,Males,37.0
+New South Wales,2012,Persons,4188.0
+Victoria,2012,Persons,2278.0
+Queensland,2012,Persons,3445.0
+Western Australia,2012,Persons,1149.0
+South Australia,2012,Persons,699.0
+Tasmania,2012,Persons,255.0
+Australian Capital Territory,2012,Persons,132.0
+Northern Territory,2012,Persons,60.0
+New South Wales,2013,Females,1767.0
+Victoria,2013,Females,1000.0
+Queensland,2013,Females,1528.0
+Western Australia,2013,Females,535.0
+South Australia,2013,Females,286.0
+Tasmania,2013,Females,136.0
+Australian Capital Territory,2013,Females,54.0
+Northern Territory,2013,Females,24.0
+New South Wales,2013,Males,2540.0
+Victoria,2013,Males,1329.0
+Queensland,2013,Males,2168.0
+Western Australia,2013,Males,785.0
+South Australia,2013,Males,438.0
+Tasmania,2013,Males,138.0
+Australian Capital Territory,2013,Males,81.0
+Northern Territory,2013,Males,39.0
+New South Wales,2013,Persons,4307.0
+Victoria,2013,Persons,2329.0
+Queensland,2013,Persons,3696.0
+Western Australia,2013,Persons,1320.0
+South Australia,2013,Persons,724.0
+Tasmania,2013,Persons,274.0
+Australian Capital Territory,2013,Persons,135.0
+Northern Territory,2013,Persons,63.0
+New South Wales,2014,Females,1797.0
+Victoria,2014,Females,1064.0
+Queensland,2014,Females,1505.0
+Western Australia,2014,Females,532.0
+South Australia,2014,Females,313.0
+Tasmania,2014,Females,169.0
+Australian Capital Territory,2014,Females,63.0
+Northern Territory,2014,Females,25.0
+New South Wales,2014,Males,2558.0
+Victoria,2014,Males,1401.0
+Queensland,2014,Males,2205.0
+Western Australia,2014,Males,774.0
+South Australia,2014,Males,482.0
+Tasmania,2014,Males,163.0
+Australian Capital Territory,2014,Males,81.0
+Northern Territory,2014,Males,43.0
+New South Wales,2014,Persons,4355.0
+Victoria,2014,Persons,2465.0
+Queensland,2014,Persons,3710.0
+Western Australia,2014,Persons,1306.0
+South Australia,2014,Persons,795.0
+Tasmania,2014,Persons,332.0
+Australian Capital Territory,2014,Persons,144.0
+Northern Territory,2014,Persons,68.0
+New South Wales,2015,Females,1778.0
+Victoria,2015,Females,1161.0
+Queensland,2015,Females,1561.0
+Western Australia,2015,Females,670.0
+South Australia,2015,Females,295.0
+Tasmania,2015,Females,136.0
+Australian Capital Territory,2015,Females,70.0
+Northern Territory,2015,Females,27.0
+New South Wales,2015,Males,2581.0
+Victoria,2015,Males,1532.0
+Queensland,2015,Males,2195.0
+Western Australia,2015,Males,900.0
+South Australia,2015,Males,474.0
+Tasmania,2015,Males,166.0
+Australian Capital Territory,2015,Males,84.0
+Northern Territory,2015,Males,48.0
+New South Wales,2015,Persons,4359.0
+Victoria,2015,Persons,2693.0
+Queensland,2015,Persons,3756.0
+Western Australia,2015,Persons,1570.0
+South Australia,2015,Persons,769.0
+Tasmania,2015,Persons,302.0
+Australian Capital Territory,2015,Persons,153.0
+Northern Territory,2015,Persons,75.0
+New South Wales,2016,Females,1926.0
+Victoria,2016,Females,1253.0
+Queensland,2016,Females,1633.0
+Western Australia,2016,Females,626.0
+South Australia,2016,Females,343.0
+Tasmania,2016,Females,148.0
+Australian Capital Territory,2016,Females,75.0
+Northern Territory,2016,Females,28.0
+New South Wales,2016,Males,2857.0
+Victoria,2016,Males,1569.0
+Queensland,2016,Males,2331.0
+Western Australia,2016,Males,919.0
+South Australia,2016,Males,463.0
+Tasmania,2016,Males,186.0
+Australian Capital Territory,2016,Males,92.0
+Northern Territory,2016,Males,54.0
+New South Wales,2016,Persons,4783.0
+Victoria,2016,Persons,2822.0
+Queensland,2016,Persons,3964.0
+Western Australia,2016,Persons,1545.0
+South Australia,2016,Persons,806.0
+Tasmania,2016,Persons,334.0
+Australian Capital Territory,2016,Persons,167.0
+Northern Territory,2016,Persons,82.0
+New South Wales,2017,Females,1953.0
+Victoria,2017,Females,1309.0
+Queensland,2017,Females,1675.0
+Western Australia,2017,Females,592.0
+South Australia,2017,Females,334.0
+Tasmania,2017,Females,159.0
+Australian Capital Territory,2017,Females,77.0
+Northern Territory,2017,Females,29.0
+New South Wales,2017,Males,2967.0
+Victoria,2017,Males,1673.0
+Queensland,2017,Males,2475.0
+Western Australia,2017,Males,870.0
+South Australia,2017,Males,469.0
+Tasmania,2017,Males,180.0
+Australian Capital Territory,2017,Males,107.0
+Northern Territory,2017,Males,52.0
+New South Wales,2017,Persons,4920.0
+Victoria,2017,Persons,2982.0
+Queensland,2017,Persons,4150.0
+Western Australia,2017,Persons,1462.0
+South Australia,2017,Persons,803.0
+Tasmania,2017,Persons,339.0
+Australian Capital Territory,2017,Persons,184.0
+Northern Territory,2017,Persons,81.0
+New South Wales,2018,Females,2022.0
+Victoria,2018,Females,1311.0
+Queensland,2018,Females,1735.0
+Western Australia,2018,Females,626.0
+South Australia,2018,Females,310.0
+Tasmania,2018,Females,196.0
+Australian Capital Territory,2018,Females,81.0
+Northern Territory,2018,Females,30.0
+New South Wales,2018,Males,2984.0
+Victoria,2018,Males,1763.0
+Queensland,2018,Males,2343.0
+Western Australia,2018,Males,863.0
+South Australia,2018,Males,479.0
+Tasmania,2018,Males,205.0
+Australian Capital Territory,2018,Males,114.0
+Northern Territory,2018,Males,52.0
+New South Wales,2018,Persons,5006.0
+Victoria,2018,Persons,3075.0
+Queensland,2018,Persons,4078.0
+Western Australia,2018,Persons,1489.0
+South Australia,2018,Persons,789.0
+Tasmania,2018,Persons,401.0
+Australian Capital Territory,2018,Persons,195.0
+Northern Territory,2018,Persons,83.0
+New South Wales,2019,Females,2075.0
+Victoria,2019,Females,1201.0
+Queensland,2019,Females,1845.0
+Western Australia,2019,Females,680.0
+South Australia,2019,Females,358.0
+Tasmania,2019,Females,188.0
+Australian Capital Territory,2019,Females,86.0
+Northern Territory,2019,Females,33.0
+New South Wales,2019,Males,3003.0
+Victoria,2019,Males,1631.0
+Queensland,2019,Males,2602.0
+Western Australia,2019,Males,949.0
+South Australia,2019,Males,546.0
+Tasmania,2019,Males,224.0
+Australian Capital Territory,2019,Males,120.0
+Northern Territory,2019,Males,55.0
+New South Wales,2019,Persons,5078.0
+Victoria,2019,Persons,2832.0
+Queensland,2019,Persons,4447.0
+Western Australia,2019,Persons,1629.0
+South Australia,2019,Persons,904.0
+Tasmania,2019,Persons,412.0
+Australian Capital Territory,2019,Persons,205.0
+Northern Territory,2019,Persons,88.0
