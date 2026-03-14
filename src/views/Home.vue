@@ -4,10 +4,26 @@
       <h1 class="page-title">Sun Safety Dashboard</h1>
 
       <div class="search-box">
-        <label class="search-label">Location</label>
-        <select v-model="selectedLocation" @change="handleLocationChange" class="location-select">
+        <label class="search-label">Location Type</label>
+        <select v-model="locationType" class="location-select">
           <option value="current">Current Location</option>
+          <option value="city">City</option>
+          <option value="suburb">Suburb</option>
+          <option value="postcode">Postcode</option>
         </select>
+
+        <input
+          v-if="locationType !== 'current'"
+          v-model="searchQuery"
+          type="text"
+          class="location-input"
+          :placeholder="getPlaceholder()"
+          @keyup.enter="handleLocationChange"
+        />
+
+        <button class="search-button" @click="handleLocationChange">
+          {{ locationType === 'current' ? 'Use Current Location' : 'Search Location' }}
+        </button>
       </div>
     </div>
 
@@ -15,6 +31,11 @@
       <div class="uv-left">
         <p class="small-label">Selected Location</p>
         <h2>{{ locationName }}</h2>
+
+        <p class="updated-time" v-if="latitude !== null && longitude !== null">
+          Lat: {{ Number(latitude).toFixed(4) }} | Lon: {{ Number(longitude).toFixed(4) }}
+        </p>
+
         <p class="updated-time" v-if="currentTime">
           Updated: {{ formatDateTime(currentTime) }}
         </p>
@@ -91,8 +112,11 @@ ChartJS.register(
   CategoryScale
 )
 
-const selectedLocation = ref('current')
+const locationType = ref('current')
+const searchQuery = ref('')
 const locationName = ref('Current Location')
+const latitude = ref(null)
+const longitude = ref(null)
 const currentUv = ref(null)
 const currentTime = ref('')
 const dailyRows = ref([])
@@ -102,7 +126,6 @@ const loading = ref(false)
 const error = ref('')
 
 const uvLevel = computed(() => getUvLevel(currentUv.value))
-
 const uvCardClass = computed(() => uvLevel.value.className)
 
 const chartData = computed(() => {
@@ -152,6 +175,13 @@ const chartOptions = {
   }
 }
 
+function getPlaceholder() {
+  if (locationType.value === 'city') return 'Enter city (e.g. Melbourne)'
+  if (locationType.value === 'suburb') return 'Enter suburb (e.g. Clayton)'
+  if (locationType.value === 'postcode') return 'Enter postcode (e.g. 3168)'
+  return 'Enter location'
+}
+
 function getUvLevel(uv) {
   if (uv === null || uv === undefined) {
     return {
@@ -194,10 +224,20 @@ function getUvLevel(uv) {
   }
 }
 
-function handleLocationChange() {
-  if (selectedLocation.value === 'current') {
+async function handleLocationChange() {
+  error.value = ''
+
+  if (locationType.value === 'current') {
     getCurrentLocation()
+    return
   }
+
+  if (!searchQuery.value.trim()) {
+    error.value = 'Please enter a valid location.'
+    return
+  }
+
+  await searchLocation(searchQuery.value.trim())
 }
 
 function getCurrentLocation() {
@@ -212,13 +252,55 @@ function getCurrentLocation() {
     (position) => {
       const lat = position.coords.latitude
       const lon = position.coords.longitude
+
+      latitude.value = lat
+      longitude.value = lon
       locationName.value = 'Current Location'
+
       fetchWeather(lat, lon)
     },
     () => {
       error.value = 'Unable to retrieve your current location.'
     }
   )
+}
+
+async function searchLocation(query) {
+  loading.value = true
+  error.value = ''
+
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query + ', Australia')}`
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to search location.')
+    }
+
+    const data = await response.json()
+
+    if (!data.length) {
+      throw new Error('No matching location found.')
+    }
+
+    const place = data[0]
+    const lat = Number(place.lat)
+    const lon = Number(place.lon)
+
+    latitude.value = lat
+    longitude.value = lon
+    locationName.value = place.display_name
+
+    await fetchWeather(lat, lon)
+  } catch (err) {
+    error.value = err.message || 'Something went wrong while searching location.'
+  } finally {
+    loading.value = false
+  }
 }
 
 async function fetchWeather(lat, lon) {
@@ -251,11 +333,11 @@ async function fetchWeather(lat, lon) {
         time,
         uv: data.hourly.uv_index[index]
       }))
-      .filter(item => item.time.startsWith(today))
+      .filter((item) => item.time.startsWith(today))
       .slice(0, 24)
 
-    hourlyLabels.value = todayHourlyItems.map(item => formatHour(item.time))
-    hourlyUvValues.value = todayHourlyItems.map(item => item.uv)
+    hourlyLabels.value = todayHourlyItems.map((item) => formatHour(item.time))
+    hourlyUvValues.value = todayHourlyItems.map((item) => item.uv)
 
     dailyRows.value = data.daily.time.slice(0, 7).map((date, index) => ({
       date,
@@ -326,60 +408,125 @@ onMounted(() => {
 
 <style scoped>
 .home-page {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
-  padding: 32px 40px;
-  background: #fffbea;
+  padding: 36px 40px 48px;
+  background:
+    radial-gradient(circle at top left, #fff8d6 0%, #fffbea 35%, #f8fbff 100%);
   box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1f2937;
 }
 
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 24px;
-  margin-bottom: 28px;
+  gap: 28px;
+  margin-bottom: 30px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 32px;
-  line-height: 1.25;
-  color: #333;
+  font-size: 36px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1e293b;
   text-align: left;
 }
 
 .search-box {
   display: flex;
   flex-direction: column;
-  min-width: 260px;
+  min-width: 320px;
+  gap: 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(10px);
 }
 
 .search-label {
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #666;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   text-align: left;
 }
 
-.location-select {
-  padding: 12px 14px;
-  border: 1px solid #d8d8d8;
+.location-select,
+.location-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #dbe3ee;
   border-radius: 14px;
-  background: #fff;
+  background: #ffffff;
   font-size: 15px;
+  font-weight: 500;
+  color: #1f2937;
   outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.location-select:focus,
+.location-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+}
+
+.location-input::placeholder {
+  color: #94a3b8;
+}
+
+.search-button {
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 55%, #60a5fa 100%);
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.search-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(37, 99, 235, 0.34);
+}
+
+.search-button:active {
+  transform: translateY(0);
+  opacity: 0.95;
 }
 
 .uv-card {
   display: flex;
   justify-content: space-between;
-  gap: 28px;
-  padding: 28px;
-  border-radius: 22px;
-  margin-bottom: 28px;
-  color: #222;
+  gap: 32px;
+  padding: 32px;
+  border-radius: 26px;
+  margin-bottom: 30px;
+  color: #1f2937;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(6px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.uv-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.14);
 }
 
 .uv-left,
@@ -389,124 +536,180 @@ onMounted(() => {
 
 .uv-left {
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.uv-left h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #0f172a;
+  word-break: break-word;
 }
 
 .uv-right {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .small-label {
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.12em;
   opacity: 0.75;
   margin-bottom: 10px;
 }
 
 .uv-value {
-  font-size: 64px;
+  font-size: 76px;
   line-height: 1;
-  margin: 12px 0;
+  margin: 10px 0 12px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .uv-level {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   margin: 0;
 }
 
 .uv-advice {
   margin-top: 10px;
   font-size: 16px;
+  line-height: 1.55;
+  color: #334155;
 }
 
 .updated-time {
   margin-top: 12px;
-  color: #555;
-  font-size: 15px;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .section-card {
   width: 100%;
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 24px;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 24px;
+  padding: 26px;
+  margin-bottom: 30px;
+  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.section-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
 }
 
 .section-card h3 {
   margin-top: 0;
-  margin-bottom: 18px;
-  font-size: 22px;
-  color: #34495e;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
   text-align: left;
+  letter-spacing: -0.01em;
 }
 
 .chart-wrapper {
   height: 420px;
+  padding: 8px 4px 4px;
 }
 
 .table-wrapper {
   overflow-x: auto;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 th,
 td {
-  padding: 14px 12px;
+  padding: 16px 14px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #edf2f7;
   font-size: 15px;
 }
 
 th {
-  background: #fff4bf;
+  background: linear-gradient(180deg, #fff7cf 0%, #fff0a8 100%);
+  color: #334155;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tbody tr {
+  transition: background-color 0.18s ease;
+}
+
+tbody tr:hover {
+  background-color: #f8fbff;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .status-text {
-  color: #666;
-  margin-top: 10px;
+  color: #475569;
+  margin-top: 14px;
   text-align: left;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .error-text {
-  color: #c62828;
+  color: #b91c1c;
+  background: #fff1f2;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #fecdd3;
 }
 
 .uv-low {
-  background: #d8f3dc;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
 }
 
 .uv-moderate {
-  background: #fff3b0;
+  background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%);
 }
 
 .uv-high {
-  background: #ffd6a5;
+  background: linear-gradient(135deg, #ffedd5 0%, #fdba74 100%);
 }
 
 .uv-very-high {
-  background: #ffadad;
+  background: linear-gradient(135deg, #ffe4e6 0%, #fda4af 100%);
 }
 
 .uv-extreme {
-  background: #d0b3ff;
+  background: linear-gradient(135deg, #ede9fe 0%, #c4b5fd 100%);
 }
 
 .uv-unknown {
-  background: #eeeeee;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
 }
 
-@media (max-width: 768px) {
-  .home-page {
-    padding: 24px 20px;
-  }
-
+@media (max-width: 992px) {
   .top-bar {
     flex-direction: column;
     align-items: stretch;
@@ -525,8 +728,65 @@ th {
     text-align: left;
   }
 
+  .uv-value {
+    font-size: 64px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 24px 18px 34px;
+  }
+
+  .page-title {
+    font-size: 30px;
+  }
+
+  .search-box {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .uv-card,
+  .section-card {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .uv-left h2 {
+    font-size: 24px;
+  }
+
+  .uv-value {
+    font-size: 56px;
+  }
+
+  .uv-level {
+    font-size: 20px;
+  }
+
   .chart-wrapper {
     height: 320px;
+  }
+
+  th,
+  td {
+    padding: 13px 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 26px;
+  }
+
+  .uv-value {
+    font-size: 48px;
+  }
+
+  .section-card h3 {
+    font-size: 20px;
   }
 }
 </style>
