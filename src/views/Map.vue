@@ -1,9 +1,10 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { actAnnotation, australiaStatesGeoJson } from '../lib/australiaStatesGeoJson'
+import { buildGeoFeaturePaths, mapViewport, projectCoordinates } from '../lib/uvMapModel'
 
 const selectedState = ref('VIC')
-const hoveredState = ref(null)
-const tooltip = ref({ visible: false, x: 0, y: 0, state: null })
+const hoveredStateCode = ref('')
 
 const uvLegend = [
   { label: 'Low', range: '0-2', color: '#1f9d55' },
@@ -20,12 +21,11 @@ const stateData = [
     uv: 4.2,
     risk: 'Moderate',
     summary: 'Moderate UV conditions across most of the state.',
-    advice: 'Hat, sunglasses, sunscreen, and midday care recommended.',
+    advice: 'Use sunscreen, sunglasses, and a hat during midday hours.',
     peakTime: '12:00 PM - 2:00 PM',
     temp: '24 C',
-    path: 'M72 201 L105 133 L191 102 L255 114 L292 145 L297 187 L278 251 L219 344 L206 396 L145 416 L94 391 L71 333 L56 270 L58 234 Z',
-    labelX: 150,
-    labelY: 255,
+    cancerRate: 71,
+    cancerLabel: 'Elevated',
   },
   {
     code: 'NT',
@@ -33,12 +33,11 @@ const stateData = [
     uv: 8.3,
     risk: 'Very High',
     summary: 'Strong UV intensity across central and northern regions.',
-    advice: 'Minimise direct exposure during midday hours.',
+    advice: 'Minimise direct sun exposure around midday.',
     peakTime: '11:00 AM - 2:30 PM',
     temp: '31 C',
-    path: 'M255 114 L356 102 L429 112 L428 198 L295 199 L297 187 L292 145 Z',
-    labelX: 342,
-    labelY: 150,
+    cancerRate: 88,
+    cancerLabel: 'High',
   },
   {
     code: 'SA',
@@ -49,9 +48,8 @@ const stateData = [
     advice: 'Basic sun protection is recommended.',
     peakTime: '11:30 AM - 2:00 PM',
     temp: '26 C',
-    path: 'M219 344 L278 251 L295 199 L428 198 L439 311 L410 382 L333 415 L248 408 L206 396 Z',
-    labelX: 320,
-    labelY: 300,
+    cancerRate: 67,
+    cancerLabel: 'Elevated',
   },
   {
     code: 'QLD',
@@ -59,12 +57,11 @@ const stateData = [
     uv: 8.9,
     risk: 'Very High',
     summary: 'Very high UV across much of Queensland.',
-    advice: 'Avoid prolonged sun exposure around midday.',
+    advice: 'Avoid prolonged sun exposure in peak hours.',
     peakTime: '10:30 AM - 2:30 PM',
     temp: '30 C',
-    path: 'M429 112 L510 92 L577 110 L624 170 L639 231 L620 287 L592 332 L525 343 L484 313 L439 311 L428 198 Z',
-    labelX: 536,
-    labelY: 196,
+    cancerRate: 96,
+    cancerLabel: 'Very High',
   },
   {
     code: 'NSW',
@@ -75,9 +72,8 @@ const stateData = [
     advice: 'Use sunscreen and protective clothing.',
     peakTime: '11:00 AM - 1:30 PM',
     temp: '23 C',
-    path: 'M439 311 L484 313 L525 343 L587 378 L575 437 L522 453 L463 445 L422 404 L410 382 Z',
-    labelX: 505,
-    labelY: 382,
+    cancerRate: 61,
+    cancerLabel: 'Moderate',
   },
   {
     code: 'VIC',
@@ -85,12 +81,11 @@ const stateData = [
     uv: 2.4,
     risk: 'Low',
     summary: 'Relatively lower UV compared to northern states.',
-    advice: 'Protection still recommended around midday.',
+    advice: 'Light protection is still recommended around noon.',
     peakTime: '11:30 AM - 1:30 PM',
     temp: '20 C',
-    path: 'M410 382 L422 404 L463 445 L438 481 L382 484 L346 447 L333 415 Z',
-    labelX: 403,
-    labelY: 438,
+    cancerRate: 49,
+    cancerLabel: 'Moderate',
   },
   {
     code: 'TAS',
@@ -101,9 +96,8 @@ const stateData = [
     advice: 'Light sun protection is generally enough.',
     peakTime: '11:30 AM - 1:00 PM',
     temp: '17 C',
-    path: 'M437 554 L468 540 L492 553 L489 583 L462 594 L434 580 L427 564 Z',
-    labelX: 460,
-    labelY: 566,
+    cancerRate: 42,
+    cancerLabel: 'Lower',
   },
   {
     code: 'ACT',
@@ -114,11 +108,49 @@ const stateData = [
     advice: 'Standard UV protection is recommended.',
     peakTime: '11:30 AM - 1:30 PM',
     temp: '21 C',
-    path: 'M505 398 L514 398 L514 407 L505 407 Z',
-    labelX: 530,
-    labelY: 403,
+    cancerRate: 46,
+    cancerLabel: 'Lower',
   },
 ]
+
+const geoFeatures = buildGeoFeaturePaths(australiaStatesGeoJson)
+
+const projectedAct = {
+  centroid: projectCoordinates(149.15, -35.45),
+  lineEnd: projectCoordinates(actAnnotation.lineEnd[0], actAnnotation.lineEnd[1]),
+}
+
+const stateMap = computed(() => {
+  return new Map(stateData.map((state) => [state.code, state]))
+})
+
+const selectedStateData = computed(() => {
+  return stateMap.value.get(selectedState.value) || stateData[0]
+})
+
+const hoveredStateData = computed(() => {
+  return stateMap.value.get(hoveredStateCode.value) || null
+})
+
+const cancerRanking = computed(() => {
+  return [...stateData].sort((a, b) => b.cancerRate - a.cancerRate)
+})
+
+const maxCancerRate = computed(() => {
+  return Math.max(...cancerRanking.value.map((item) => item.cancerRate), 1)
+})
+
+const highestCancerState = computed(() => cancerRanking.value[0])
+
+const averageUv = computed(() => {
+  const total = stateData.reduce((sum, state) => sum + state.uv, 0)
+  return (total / stateData.length).toFixed(1)
+})
+
+const averageCancerRate = computed(() => {
+  const total = stateData.reduce((sum, state) => sum + state.cancerRate, 0)
+  return Math.round(total / stateData.length)
+})
 
 function getUvColor(uv) {
   if (uv <= 2) return '#1f9d55'
@@ -132,36 +164,48 @@ function getTextColor(uv) {
   return uv >= 8 ? '#ffffff' : '#17365c'
 }
 
-const selectedStateData = computed(() => {
-  return stateData.find((s) => s.code === selectedState.value) || stateData[0]
-})
-
-function handleMouseEnter(state, event) {
-  hoveredState.value = state.code
-  tooltip.value = {
-    visible: true,
-    x: event.clientX,
-    y: event.clientY,
-    state,
-  }
+function getCancerColor(rate) {
+  if (rate < 45) return '#8fd3a8'
+  if (rate < 60) return '#f2e94e'
+  if (rate < 75) return '#f39c34'
+  if (rate < 90) return '#ef3340'
+  return '#a23fa3'
 }
 
-function handleMouseMove(state, event) {
-  tooltip.value = {
-    visible: true,
-    x: event.clientX,
-    y: event.clientY,
-    state,
-  }
+function stateFill(code) {
+  const state = stateMap.value.get(code)
+  if (!state) return '#d8d4ca'
+  return getUvColor(state.uv)
 }
 
-function handleMouseLeave() {
-  hoveredState.value = null
-  tooltip.value.visible = false
+function stateOpacity(code) {
+  if (selectedState.value === code) return 0.96
+  if (hoveredStateCode.value === code) return 0.92
+  return 0.82
 }
 
-function handleClick(state) {
-  selectedState.value = state.code
+function stateStroke(code) {
+  return selectedState.value === code || hoveredStateCode.value === code ? '#17365c' : '#6f695d'
+}
+
+function stateStrokeWidth(code) {
+  return selectedState.value === code || hoveredStateCode.value === code ? 4 : 1.8
+}
+
+function cancerBarWidth(rate) {
+  return `${(rate / maxCancerRate.value) * 100}%`
+}
+
+function selectState(code) {
+  selectedState.value = code
+}
+
+function enterState(code) {
+  hoveredStateCode.value = code
+}
+
+function leaveState() {
+  hoveredStateCode.value = ''
 }
 </script>
 
@@ -172,8 +216,8 @@ function handleClick(state) {
         <p class="eyebrow">UV Forecast Map</p>
         <h1>Australia UV map</h1>
         <p class="lede">
-          State-wise UV view with hover details. This is cleaner, simpler, and much closer to the
-          Bureau of Meteorology style.
+          State-wise UV view using proper map borders. Hover to preview a state and click to see
+          full details.
         </p>
       </div>
 
@@ -181,86 +225,214 @@ function handleClick(state) {
         <p class="card-title">Map mode</p>
         <ul>
           <li><strong>Scope:</strong> State-wise only</li>
-          <li><strong>Interaction:</strong> Hover for quick info, click for details</li>
-          <li><strong>Data:</strong> Frontend demo data</li>
+          <li><strong>Map source:</strong> Real border data</li>
+          <li><strong>Interaction:</strong> Hover and click</li>
         </ul>
       </div>
     </div>
 
+    <div class="insight-strip">
+      <section class="insight-card">
+        <p class="insight-label">Highest Cancer Burden</p>
+        <h3>{{ highestCancerState.name }}</h3>
+        <p class="insight-value">{{ highestCancerState.cancerRate }} / 100k</p>
+      </section>
+
+      <section class="insight-card">
+        <p class="insight-label">Average UV</p>
+        <h3>Australia-wide</h3>
+        <p class="insight-value">UV {{ averageUv }}</p>
+      </section>
+
+      <section class="insight-card">
+        <p class="insight-label">Average Cancer Burden</p>
+        <h3>Across States</h3>
+        <p class="insight-value">{{ averageCancerRate }} / 100k</p>
+      </section>
+    </div>
+
     <div class="workspace">
-      <div class="map-shell">
-        <div class="map-header">
-          <div>
-            <p class="eyebrow small">Australia map</p>
-            <h2>Average UV by state</h2>
+      <div class="map-column">
+        <div class="map-shell">
+          <div class="map-header">
+            <div>
+              <p class="eyebrow small">Australia Map</p>
+              <h2>Average UV by state</h2>
+            </div>
+          </div>
+
+          <div class="map-board">
+            <svg
+              :viewBox="`0 0 ${mapViewport.width} ${mapViewport.height}`"
+              class="map-svg"
+              aria-label="Australia UV map by state"
+            >
+              <defs>
+                <linearGradient id="oceanFill" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f5f6f3" />
+                  <stop offset="100%" stop-color="#e4edf3" />
+                </linearGradient>
+              </defs>
+
+              <rect width="100%" height="100%" rx="26" fill="url(#oceanFill)" />
+
+              <g class="states-layer">
+                <path
+                  v-for="feature in geoFeatures"
+                  :key="feature.code"
+                  :d="feature.path"
+                  class="state-shape"
+                  :style="{
+                    fill: stateFill(feature.code),
+                    opacity: stateOpacity(feature.code),
+                    stroke: stateStroke(feature.code),
+                    strokeWidth: stateStrokeWidth(feature.code),
+                  }"
+                  @mouseenter="enterState(feature.code)"
+                  @mouseleave="leaveState"
+                  @click="selectState(feature.code)"
+                />
+
+                <g
+                  v-for="feature in geoFeatures.filter((item) => item.code !== 'ACT' && item.labelPoint)"
+                  :key="`${feature.code}-label`"
+                >
+                  <text
+                    :x="feature.labelPoint.x"
+                    :y="feature.labelPoint.y - 8"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                    class="state-code"
+                    :fill="getTextColor(stateMap.get(feature.code)?.uv || 0)"
+                  >
+                    {{ feature.code }}
+                  </text>
+
+                  <text
+                    :x="feature.labelPoint.x"
+                    :y="feature.labelPoint.y + 18"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                    class="state-uv"
+                    :fill="getTextColor(stateMap.get(feature.code)?.uv || 0)"
+                  >
+                    UV {{ (stateMap.get(feature.code)?.uv || 0).toFixed(1) }}
+                  </text>
+                </g>
+
+                <line
+                  :x1="projectedAct.centroid.x"
+                  :y1="projectedAct.centroid.y"
+                  :x2="projectedAct.lineEnd.x"
+                  :y2="projectedAct.lineEnd.y"
+                  class="act-line"
+                />
+
+                <g
+                  class="act-label-group"
+                  @mouseenter="enterState('ACT')"
+                  @mouseleave="leaveState"
+                  @click="selectState('ACT')"
+                >
+                  <text
+                    :x="projectedAct.lineEnd.x + 10"
+                    :y="projectedAct.lineEnd.y - 8"
+                    text-anchor="start"
+                    class="state-code act-code"
+                    :fill="getTextColor(stateMap.get('ACT')?.uv || 0)"
+                  >
+                    ACT
+                  </text>
+
+                  <text
+                    :x="projectedAct.lineEnd.x + 10"
+                    :y="projectedAct.lineEnd.y + 16"
+                    text-anchor="start"
+                    class="state-uv act-uv"
+                    :fill="getTextColor(stateMap.get('ACT')?.uv || 0)"
+                  >
+                    UV {{ (stateMap.get('ACT')?.uv || 0).toFixed(1) }}
+                  </text>
+                </g>
+
+                <g v-if="hoveredStateData" class="hover-box">
+                  <rect x="655" y="70" width="255" height="142" rx="18" fill="rgba(17, 44, 73, 0.94)" />
+                  <text x="676" y="100" class="hover-title">
+                    {{ hoveredStateData.name }}
+                  </text>
+                  <text x="676" y="126" class="hover-copy">
+                    Code: {{ hoveredStateData.code }}
+                  </text>
+                  <text x="676" y="150" class="hover-copy">
+                    UV: {{ hoveredStateData.uv.toFixed(1) }} | {{ hoveredStateData.risk }}
+                  </text>
+                  <text x="676" y="174" class="hover-copy">
+                    Peak: {{ hoveredStateData.peakTime }}
+                  </text>
+                  <text x="676" y="198" class="hover-copy">
+                    Cancer: {{ hoveredStateData.cancerRate }} / 100k
+                  </text>
+                </g>
+
+                <g class="legend-box">
+                  <text x="820" y="255" class="legend-title">UV Index</text>
+
+                  <g v-for="(item, index) in uvLegend" :key="item.label">
+                    <rect :x="835" :y="275 + index * 34" width="18" height="26" :fill="item.color" />
+                    <text :x="865" :y="293 + index * 34" class="legend-text">
+                      {{ item.label }}
+                    </text>
+                    <text :x="930" :y="293 + index * 34" class="legend-range">
+                      {{ item.range }}
+                    </text>
+                  </g>
+                </g>
+              </g>
+            </svg>
           </div>
         </div>
 
-        <div class="map-board">
-          <svg viewBox="0 0 700 620" class="map-svg" aria-label="Australia UV map by state">
-            <rect x="0" y="0" width="700" height="620" rx="20" fill="#f6f6f2" />
+        <section class="panel cancer-panel">
+          <div class="panel-head">
+            <p class="panel-label">Region-wise cancer burden</p>
+            <span class="micro">Indicative skin cancer cases per 100,000 people</span>
+          </div>
 
-            <g>
-              <path
-                d="M72 201 L105 133 L191 102 L356 102 L510 92 L577 110 L624 170 L639 231 L620 287 L587 378 L575 437 L522 453 L489 583 L462 594 L434 580 L438 481 L382 484 L346 447 L248 408 L145 416 L94 391 L71 333 L56 270 L58 234 Z"
-                fill="#f0efe8"
-                stroke="#5e5a52"
-                stroke-width="2"
-              />
-            </g>
+          <div class="cancer-chart">
+            <div
+              v-for="item in cancerRanking"
+              :key="item.code"
+              class="cancer-row"
+              @click="selectState(item.code)"
+            >
+              <div class="cancer-row-head">
+                <div class="cancer-state">
+                  <strong>{{ item.name }}</strong>
+                  <span>{{ item.code }}</span>
+                </div>
+                <div class="cancer-meta">
+                  <strong>{{ item.cancerRate }}</strong>
+                  <span>{{ item.cancerLabel }}</span>
+                </div>
+              </div>
 
-            <g>
-              <path
-                v-for="state in stateData"
-                :key="state.code"
-                :d="state.path"
-                :fill="getUvColor(state.uv)"
-                :stroke="selectedState === state.code ? '#17365c' : '#777164'"
-                :stroke-width="selectedState === state.code ? 4 : 1.6"
-                class="state-shape"
-                @mouseenter="handleMouseEnter(state, $event)"
-                @mousemove="handleMouseMove(state, $event)"
-                @mouseleave="handleMouseLeave"
-                @click="handleClick(state)"
-              />
-            </g>
+              <div class="cancer-track">
+                <div
+                  class="cancer-fill"
+                  :style="{
+                    width: cancerBarWidth(item.cancerRate),
+                    background: getCancerColor(item.cancerRate),
+                  }"
+                ></div>
+              </div>
+            </div>
+          </div>
 
-            <g>
-              <text
-                v-for="state in stateData"
-                :key="`${state.code}-label`"
-                :x="state.labelX"
-                :y="state.labelY"
-                text-anchor="middle"
-                dominant-baseline="middle"
-                :fill="getTextColor(state.uv)"
-                class="state-label"
-              >
-                {{ state.code }}
-              </text>
-            </g>
-
-            <g class="legend-box">
-              <text x="565" y="55" class="legend-title">UV Index</text>
-
-              <g v-for="(item, index) in uvLegend" :key="item.label">
-                <rect
-                  :x="575"
-                  :y="72 + index * 38"
-                  width="16"
-                  height="28"
-                  :fill="item.color"
-                />
-                <text :x="600" :y="90 + index * 38" class="legend-text">
-                  {{ item.label }}
-                </text>
-                <text :x="650" :y="90 + index * 38" class="legend-range">
-                  {{ item.range }}
-                </text>
-              </g>
-            </g>
-          </svg>
-        </div>
+          <p class="prediction-note">
+            This chart compares estimated regional skin cancer burden. Click any row to sync the
+            state details on the right panel.
+          </p>
+        </section>
       </div>
 
       <aside class="details-column">
@@ -284,14 +456,15 @@ function handleClick(state) {
               <strong>{{ selectedStateData.temp }}</strong>
             </div>
             <div class="info-box">
-              <span>Risk Level</span>
-              <strong>{{ selectedStateData.risk }}</strong>
+              <span>Cancer Burden</span>
+              <strong>{{ selectedStateData.cancerRate }} / 100k</strong>
             </div>
           </div>
 
           <div class="description-box">
             <p><strong>Summary:</strong> {{ selectedStateData.summary }}</p>
             <p><strong>Advice:</strong> {{ selectedStateData.advice }}</p>
+            <p><strong>Cancer Risk Level:</strong> {{ selectedStateData.cancerLabel }}</p>
           </div>
         </section>
 
@@ -311,19 +484,18 @@ function handleClick(state) {
             </div>
           </div>
         </section>
-      </aside>
-    </div>
 
-    <div
-      v-if="tooltip.visible && tooltip.state"
-      class="hover-tooltip"
-      :style="{ left: `${tooltip.x + 14}px`, top: `${tooltip.y + 14}px` }"
-    >
-      <p class="tooltip-title">{{ tooltip.state.name }}</p>
-      <p>Code: {{ tooltip.state.code }}</p>
-      <p>UV: {{ tooltip.state.uv.toFixed(1) }}</p>
-      <p>Risk: {{ tooltip.state.risk }}</p>
-      <p>Peak: {{ tooltip.state.peakTime }}</p>
+        <section class="panel note-panel">
+          <div class="panel-head">
+            <p class="panel-label">Quick note</p>
+            <span class="micro">Interpretation</span>
+          </div>
+          <p class="note-text">
+            Higher UV regions generally align with higher long-term skin cancer burden, but this
+            panel shows indicative regional burden only, not live clinical diagnoses.
+          </p>
+        </section>
+      </aside>
     </div>
   </section>
 </template>
@@ -332,7 +504,9 @@ function handleClick(state) {
 .map-page {
   min-height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, #f8f7f3 0%, #edf5fb 100%);
+  background:
+    radial-gradient(circle at top left, rgba(244, 230, 201, 0.45), transparent 28%),
+    linear-gradient(135deg, #f8f7f3 0%, #edf5fb 100%);
   color: #17365c;
 }
 
@@ -341,10 +515,11 @@ function handleClick(state) {
   grid-template-columns: 1.7fr 0.9fr;
   gap: 1rem;
   margin-bottom: 1rem;
+  align-items: start;
 }
 
 .hero-copy h1 {
-  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
   line-height: 0.95;
   margin: 0.35rem 0 0.7rem;
   color: #102f54;
@@ -360,7 +535,7 @@ function handleClick(state) {
 }
 
 .eyebrow.small {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 
 .lede {
@@ -373,7 +548,8 @@ function handleClick(state) {
 
 .summary-card,
 .map-shell,
-.panel {
+.panel,
+.insight-card {
   background: rgba(255, 251, 245, 0.9);
   border: 1px solid rgba(194, 183, 156, 0.65);
   border-radius: 1.4rem;
@@ -392,13 +568,38 @@ function handleClick(state) {
 }
 
 .card-title,
-.panel-label {
+.panel-label,
+.insight-label {
   margin: 0 0 0.75rem;
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: #d86236;
   font-weight: 800;
+}
+
+.insight-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.insight-card {
+  padding: 1rem 1.1rem;
+}
+
+.insight-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+  color: #102f54;
+}
+
+.insight-value {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #d86236;
 }
 
 .workspace {
@@ -408,13 +609,20 @@ function handleClick(state) {
   align-items: start;
 }
 
+.map-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .map-shell {
   padding: 1rem;
 }
 
 .map-header h2 {
   margin: 0.2rem 0 0;
-  font-size: 1.1rem;
+  font-size: 1.08rem;
+  color: #17365c;
 }
 
 .map-board {
@@ -430,29 +638,143 @@ function handleClick(state) {
 
 .state-shape {
   cursor: pointer;
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  stroke-linejoin: round;
+  transition: opacity 0.18s ease, stroke-width 0.18s ease, transform 0.18s ease;
 }
 
 .state-shape:hover {
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
-.state-label {
-  font-size: 0.95rem;
+.state-code {
+  font-size: 22px;
   font-weight: 900;
+  letter-spacing: 0.05em;
   pointer-events: none;
 }
 
-.legend-title {
-  font-size: 0.95rem;
+.state-uv {
+  font-size: 14px;
   font-weight: 800;
-  fill: #102f54;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+}
+
+.act-code {
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.act-uv {
+  pointer-events: none;
+}
+
+.act-label-group {
+  cursor: pointer;
+}
+
+.act-line {
+  stroke: rgba(16, 42, 67, 0.75);
+  stroke-width: 3;
+}
+
+.hover-title {
+  fill: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.hover-copy {
+  fill: rgba(255, 255, 255, 0.88);
+  font-size: 17px;
+}
+
+.legend-title {
+  fill: #17365c;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 .legend-text,
 .legend-range {
-  font-size: 0.78rem;
   fill: #17365c;
+  font-size: 16px;
+}
+
+.cancer-panel {
+  padding: 1.1rem;
+}
+
+.cancer-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.6rem;
+}
+
+.cancer-row {
+  padding: 0.85rem 0.95rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.55);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+}
+
+.cancer-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 47, 84, 0.08);
+}
+
+.cancer-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.cancer-state,
+.cancer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cancer-state strong,
+.cancer-meta strong {
+  color: #17365c;
+}
+
+.cancer-state span,
+.cancer-meta span {
+  font-size: 0.82rem;
+  color: #55728f;
+  font-weight: 700;
+}
+
+.cancer-meta {
+  text-align: right;
+}
+
+.cancer-track {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(192, 204, 216, 0.42);
+  overflow: hidden;
+}
+
+.cancer-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.prediction-note {
+  margin: 0.9rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #55728f;
 }
 
 .details-column {
@@ -566,33 +888,20 @@ function handleClick(state) {
   display: inline-block;
 }
 
-.hover-tooltip {
-  position: fixed;
-  z-index: 9999;
-  min-width: 180px;
-  background: rgba(16, 47, 84, 0.96);
-  color: white;
-  padding: 0.85rem 0.95rem;
-  border-radius: 0.85rem;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-  font-size: 0.86rem;
-  line-height: 1.5;
+.note-panel {
+  background: linear-gradient(135deg, rgba(255, 251, 245, 0.95), rgba(243, 246, 251, 0.95));
 }
 
-.tooltip-title {
-  margin: 0 0 0.4rem;
-  font-weight: 800;
-  font-size: 0.95rem;
-}
-
-.hover-tooltip p {
+.note-text {
   margin: 0;
+  line-height: 1.65;
+  color: #476380;
 }
 
 @media (max-width: 1100px) {
   .hero,
-  .workspace {
+  .workspace,
+  .insight-strip {
     grid-template-columns: 1fr;
   }
 }
@@ -604,6 +913,23 @@ function handleClick(state) {
 
   .detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .state-code {
+    font-size: 18px;
+  }
+
+  .state-uv {
+    font-size: 12px;
+  }
+
+  .cancer-row-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cancer-meta {
+    text-align: left;
   }
 }
 </style>
