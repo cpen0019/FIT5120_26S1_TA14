@@ -34,9 +34,10 @@ def get_state_stats():
                 """
                 SELECT
                     state,
-                    AVG(age_standardised_rate) AS avg_incidence_rate,
+                    ROUND(AVG(age_standardised_rate)::numeric, 2) AS avg_incidence_rate,
                     SUM(cases) AS total_cases
                 FROM melanoma_state_incidence
+                WHERE state <> 'Australia'
                 GROUP BY state
                 ORDER BY state;
                 """
@@ -57,10 +58,11 @@ def get_state_details(state_code: str):
                 SELECT
                     state,
                     year,
-                    cases,
-                    age_standardised_rate
+                    SUM(cases) AS cases,
+                    ROUND(AVG(age_standardised_rate)::numeric, 2) AS age_standardised_rate
                 FROM melanoma_state_incidence
                 WHERE state = %s
+                GROUP BY state, year
                 ORDER BY year;
                 """,
                 (state_name,),
@@ -76,13 +78,22 @@ def get_state_comparison():
         with conn.cursor() as cur:
             cur.execute(
                 """
+                WITH latest_year AS (
+                    SELECT MAX(year) AS year
+                    FROM melanoma_state_incidence
+                    WHERE state <> 'Australia'
+                )
                 SELECT
-                    year,
-                    state,
-                    cases,
-                    age_standardised_rate
-                FROM melanoma_state_incidence
-                ORDER BY year, state;
+                    m.state,
+                    m.year,
+                    SUM(m.cases) AS cases,
+                    ROUND(AVG(m.age_standardised_rate)::numeric, 2) AS age_standardised_rate
+                FROM melanoma_state_incidence m
+                JOIN latest_year y
+                  ON m.year = y.year
+                WHERE m.state <> 'Australia'
+                GROUP BY m.state, m.year
+                ORDER BY age_standardised_rate DESC, m.state;
                 """
             )
             return cur.fetchall()

@@ -13,11 +13,9 @@ def get_cancer_trends():
                     m.mortality_rate
                 FROM
                     (
-                        SELECT DISTINCT year
-                        FROM melanoma_incidence
+                        SELECT DISTINCT year FROM melanoma_incidence
                         UNION
-                        SELECT DISTINCT year
-                        FROM melanoma_mortality
+                        SELECT DISTINCT year FROM melanoma_mortality
                     ) AS years
                 LEFT JOIN
                     (
@@ -25,8 +23,6 @@ def get_cancer_trends():
                             year,
                             AVG(age_specific_rate) AS incidence_rate
                         FROM melanoma_incidence
-                        WHERE sex = 'Persons'
-                          AND age_group = 'All ages combined'
                         GROUP BY year
                     ) AS i
                     ON years.year = i.year
@@ -36,8 +32,6 @@ def get_cancer_trends():
                             year,
                             AVG(age_specific_rate) AS mortality_rate
                         FROM melanoma_mortality
-                        WHERE sex = 'Persons'
-                          AND age_group = 'All ages combined'
                         GROUP BY year
                     ) AS m
                     ON years.year = m.year
@@ -59,8 +53,7 @@ def get_cancer_age_groups():
                     age_group,
                     AVG(age_specific_rate) AS incidence_rate
                 FROM melanoma_incidence
-                WHERE sex = 'Persons'
-                  AND age_group <> 'All ages combined'
+                WHERE age_group IS NOT NULL
                 GROUP BY age_group
                 ORDER BY age_group;
                 """
