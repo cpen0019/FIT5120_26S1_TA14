@@ -34,10 +34,12 @@ def to_float(value):
 
 
 def import_incidence(conn):
+    print(f"Opening: {INCIDENCE_FILE}")
     if not INCIDENCE_FILE.exists():
         print(f"Skipped: {INCIDENCE_FILE} not found")
         return
 
+    inserted = 0
     with open(INCIDENCE_FILE, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         with conn.cursor() as cur:
@@ -58,15 +60,19 @@ def import_incidence(conn):
                     """,
                     (year, sex, age_group, rate),
                 )
+                inserted += 1
+
     conn.commit()
-    print("Imported melanoma_incidence")
+    print(f"Imported melanoma_incidence: {inserted} rows")
 
 
 def import_mortality(conn):
+    print(f"Opening: {MORTALITY_FILE}")
     if not MORTALITY_FILE.exists():
         print(f"Skipped: {MORTALITY_FILE} not found")
         return
 
+    inserted = 0
     with open(MORTALITY_FILE, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         with conn.cursor() as cur:
@@ -87,15 +93,19 @@ def import_mortality(conn):
                     """,
                     (year, sex, age_group, rate),
                 )
+                inserted += 1
+
     conn.commit()
-    print("Imported melanoma_mortality")
+    print(f"Imported melanoma_mortality: {inserted} rows")
 
 
 def import_state_incidence(conn):
+    print(f"Opening: {STATE_FILE}")
     if not STATE_FILE.exists():
         print(f"Skipped: {STATE_FILE} not found")
         return
 
+    inserted = 0
     with open(STATE_FILE, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         with conn.cursor() as cur:
@@ -118,12 +128,17 @@ def import_state_incidence(conn):
                     """,
                     (year, state, cases, rate),
                 )
+                inserted += 1
+
     conn.commit()
-    print("Imported melanoma_state_incidence")
+    print(f"Imported melanoma_state_incidence: {inserted} rows")
 
 
 def main():
+    print("Connecting to database...")
     conn = get_connection()
+    print("Database connected.")
+
     try:
         import_incidence(conn)
         import_mortality(conn)
@@ -131,6 +146,7 @@ def main():
         print("All CSV imports completed.")
     finally:
         conn.close()
+        print("Database connection closed.")
 
 
 if __name__ == "__main__":
