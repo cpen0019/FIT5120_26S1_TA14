@@ -130,6 +130,7 @@ import {
   CategoryScale
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
+import { getRealtimeUV, getHourlyUV, getWeeklyUV } from '../lib/api'
 
 ChartJS.register(
   Title,
@@ -147,6 +148,7 @@ const locationName = ref('Current Location')
 const latitude = ref(null)
 const longitude = ref(null)
 const currentUv = ref(null)
+const currentTemperature = ref(null)
 const currentTime = ref('')
 const dailyRows = ref([])
 const hourlyLabels = ref([])
@@ -286,7 +288,7 @@ function getCurrentLocation() {
   }
 
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const lat = position.coords.latitude
       const lon = position.coords.longitude
 
@@ -294,7 +296,7 @@ function getCurrentLocation() {
       longitude.value = lon
       locationName.value = 'Current Location'
 
-      fetchWeather(lat, lon)
+      await fetchWeather(lat, lon)
     },
     () => {
       error.value = 'Unable to retrieve your current location.'
@@ -345,30 +347,22 @@ async function fetchWeather(lat, lon) {
   error.value = ''
 
   try {
-    const url =
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&current=uv_index` +
-      `&hourly=uv_index` +
-      `&daily=uv_index_max,temperature_2m_max,temperature_2m_min` +
-      `&timezone=auto`
+    const [realtime, hourly, weekly] = await Promise.all([
+      getRealtimeUV(lat, lon),
+      getHourlyUV(lat, lon),
+      getWeeklyUV(lat, lon)
+    ])
 
-    const response = await fetch(url)
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch weather data.')
-    }
-
-    const data = await response.json()
-
-    currentUv.value = data.current?.uv_index ?? null
-    currentTime.value = data.current?.time ?? ''
+    currentUv.value = realtime?.current?.uv_index ?? null
+    currentTemperature.value = realtime?.current?.temperature_2m ?? null
+    currentTime.value = realtime?.current?.time ?? ''
 
     const today = getLocalTodayDateString()
 
-    const todayHourlyItems = data.hourly.time
+    const todayHourlyItems = (hourly?.hourly?.time || [])
       .map((time, index) => ({
         time,
-        uv: data.hourly.uv_index[index]
+        uv: hourly?.hourly?.uv_index?.[index]
       }))
       .filter((item) => item.time.startsWith(today))
       .slice(0, 24)
@@ -376,13 +370,14 @@ async function fetchWeather(lat, lon) {
     hourlyLabels.value = todayHourlyItems.map((item) => formatHour(item.time))
     hourlyUvValues.value = todayHourlyItems.map((item) => item.uv)
 
-    dailyRows.value = data.daily.time.slice(0, 7).map((date, index) => ({
+    dailyRows.value = (weekly?.daily?.time || []).slice(0, 7).map((date, index) => ({
       date,
-      uv: data.daily.uv_index_max[index],
-      maxTemp: data.daily.temperature_2m_max[index],
-      minTemp: data.daily.temperature_2m_min[index]
+      uv: weekly?.daily?.uv_index_max?.[index],
+      maxTemp: weekly?.daily?.temperature_2m_max?.[index],
+      minTemp: weekly?.daily?.temperature_2m_min?.[index]
     }))
   } catch (err) {
+    console.error(err)
     error.value = err.message || 'Something went wrong.'
   } finally {
     loading.value = false
@@ -463,7 +458,9 @@ onMounted(() => {
 
 .page-title,
 .search-box,
-.section-card {
+.section-card,
+.uv-card,
+.legend-card {
   background: #fdf9f0;
   border: 1px solid #e6d9bf;
   border-radius: 28px;
@@ -485,10 +482,11 @@ onMounted(() => {
   gap: 12px;
 }
 
-.search-label {
-  font-size: .9rem;
+.search-label,
+.small-label {
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: .14em;
+  letter-spacing: 0.14em;
   color: #df6a3b;
   text-transform: uppercase;
 }
@@ -500,7 +498,6 @@ onMounted(() => {
   border: 1px solid #e6d9bf;
   background: #fffdf7;
   font-size: 15px;
-  font-weight: 400;
   color: #1f3d73;
   outline: none;
   font-family: inherit;
@@ -509,7 +506,7 @@ onMounted(() => {
 .location-select:focus,
 .location-input:focus {
   border-color: #df6a3b;
-  box-shadow: 0 0 0 4px rgba(223,106,59,.12);
+  box-shadow: 0 0 0 4px rgba(223, 106, 59, 0.12);
 }
 
 .search-button {
@@ -518,54 +515,56 @@ onMounted(() => {
   border-radius: 16px;
   background: #df6a3b;
   color: #fff;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  font-family: inherit;
 }
 
 .uv-card {
+  margin-bottom: 24px;
+  padding: 28px 32px;
   display: flex;
   justify-content: space-between;
-  gap: 32px;
-  padding: 32px;
-  border-radius: 28px;
-  margin-bottom: 28px;
-  border: 1px solid #e6d9bf;
+  gap: 24px;
+  align-items: center;
 }
 
-.uv-left h2 {
-  margin: 0;
-  font-size: 2.2rem;
-  font-weight: 500;
-  color: #1f3d73;
-}
-
-.small-label {
-  font-size: .85rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: #607395;
+.uv-left h2,
+.uv-right h2 {
+  margin: 8px 0;
 }
 
 .uv-value {
-  font-size: 4.8rem;
-  margin: 10px 0;
-  font-weight: 500;
-  color: #1f3d73;
+  font-size: 3rem;
 }
 
-.uv-level {
-  font-size: 1.7rem;
-  font-weight: 500;
-  color: #1f3d73;
-}
-
+.updated-time,
 .uv-advice,
-.updated-time {
-  color: #607395;
-  font-weight: 400;
-  line-height: 1.7;
+.uv-level {
+  color: #4d6288;
+}
+
+.uv-low {
+  border-left: 8px solid #1f9d55;
+}
+
+.uv-moderate {
+  border-left: 8px solid #f2e94e;
+}
+
+.uv-high {
+  border-left: 8px solid #f39c34;
+}
+
+.uv-very-high {
+  border-left: 8px solid #ef3340;
+}
+
+.uv-extreme {
+  border-left: 8px solid #a23fa3;
+}
+
+.uv-unknown {
+  border-left: 8px solid #94a3b8;
 }
 
 .section-card {
@@ -574,176 +573,127 @@ onMounted(() => {
 }
 
 .section-card h3 {
-  font-size: 1.9rem;
-  margin-bottom: 18px;
-  font-weight: 500;
-  color: #1f3d73;
+  margin: 0 0 18px;
 }
 
 .chart-row {
-  display: flex;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.45fr;
+  gap: 18px;
+  align-items: stretch;
 }
 
 .chart-wrapper {
-  flex: 1;
-  height: 360px;
+  height: 320px;
+  background: #fffdf7;
+  border: 1px solid #eadfc7;
+  border-radius: 20px;
+  padding: 16px;
 }
 
 .legend-card {
-  width: 320px;
-  background: #fdf9f0;
-  border: 1px solid #e6d9bf;
-  border-radius: 24px;
-  padding: 22px;
+  padding: 20px;
 }
 
 .legend-header {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 18px;
+  flex-direction: column;
+  margin-bottom: 16px;
 }
 
 .legend-heading {
-  font-size: .9rem;
-  font-weight: 600;
-  letter-spacing: .14em;
-  color: #df6a3b;
-  text-transform: uppercase;
+  color: #1f3d73;
+  font-weight: 700;
 }
 
 .legend-subtitle {
-  font-size: .9rem;
-  font-weight: 500;
-  color: #607395;
+  color: #4d6288;
+  font-size: 0.9rem;
 }
 
 .legend-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 12px;
 }
 
-.legend-row {
+.legend-row,
+.legend-left {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: #fffdf7;
-  border-radius: 16px;
-  padding: 14px 16px;
-  border: 1px solid #eee3cf;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .legend-left {
-  font-weight: 400;
+  justify-content: flex-start;
 }
 
-.legend-label,
-.legend-range {
-  font-weight: 400;
-  color: #1f3d73;
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
 }
 
 .table-wrapper {
-  border-radius: 18px;
-  border: 1px solid #eadfca;
   overflow-x: auto;
+  border: 1px solid #eadfc7;
+  border-radius: 18px;
+  background: #fffdf7;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #fffdf7;
 }
 
 th,
 td {
-  padding: 16px 14px;
-  border-bottom: 1px solid #efe6d7;
-  font-size: 15px;
-  font-weight: 400;
-  color: #607395;
-  text-align: center;
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f0e7d6;
 }
 
 th {
-  background: #fff5de;
+  background: #fff7ea;
   color: #1f3d73;
-  font-size: .8rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  font-weight: 600;
 }
 
 .status-text {
+  text-align: center;
+  color: #1f3d73;
   margin-top: 12px;
-  color: #607395;
 }
 
 .error-text {
-  background: #fff3f1;
-  border: 1px solid #efc3bd;
-  border-radius: 16px;
-  padding: 14px;
-  color: #b94a48;
+  color: #9f2f2f;
 }
 
-.uv-low {
-  background: linear-gradient(135deg,#e5f6e8,#d5efd9);
+@media (max-width: 980px) {
+  .top-bar,
+  .chart-row {
+    grid-template-columns: 1fr;
+  }
+
+  .uv-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
-.uv-moderate {
-  background: linear-gradient(135deg,#fff7d6,#f8ecaa);
-}
+@media (max-width: 768px) {
+  .home-page {
+    padding: 24px 16px 40px;
+  }
 
-.uv-high {
-  background: linear-gradient(135deg,#ffe9d5,#f5c48f);
-}
+  .page-title {
+    font-size: 2.2rem;
+    padding: 28px;
+  }
 
-.uv-very-high {
-  background: linear-gradient(135deg,#ffdfe2,#f5b5bb);
-}
-
-.uv-extreme {
-  background: linear-gradient(135deg,#eee4ff,#d3bef4);
-}
-
-@media (max-width:1100px){
-
-.top-bar{
-grid-template-columns:1fr;
-}
-
-.chart-row{
-flex-direction:column;
-}
-
-.legend-card{
-width:100%;
-}
-
-}
-
-@media (max-width:768px){
-
-.home-page{
-padding:24px 16px 40px;
-}
-
-.page-title,
-.search-box,
-.section-card,
-.legend-card{
-border-radius:22px;
-}
-
-.page-title{
-font-size:2.4rem;
-}
-
-.chart-wrapper{
-height:300px;
-}
-
+  .section-card,
+  .search-box,
+  .uv-card {
+    padding: 22px;
+  }
 }
 </style>

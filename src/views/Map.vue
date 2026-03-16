@@ -1,935 +1,594 @@
-<script setup>
-import { computed, ref } from 'vue'
-import { actAnnotation, australiaStatesGeoJson } from '../lib/australiaStatesGeoJson'
-import { buildGeoFeaturePaths, mapViewport, projectCoordinates } from '../lib/uvMapModel'
-
-const selectedState = ref('VIC')
-const hoveredStateCode = ref('')
-
-const uvLegend = [
-  { label: 'Low', range: '0-2', color: '#1f9d55' },
-  { label: 'Moderate', range: '3-5', color: '#f2e94e' },
-  { label: 'High', range: '6-7', color: '#f39c34' },
-  { label: 'Very High', range: '8-10', color: '#ef3340' },
-  { label: 'Extreme', range: '11+', color: '#a23fa3' },
-]
-
-const stateData = [
-  {
-    code: 'WA',
-    name: 'Western Australia',
-    uv: 4.2,
-    risk: 'Moderate',
-    summary: 'Moderate UV conditions across most of the state.',
-    advice: 'Use sunscreen, sunglasses, and a hat during midday hours.',
-    peakTime: '12:00 PM - 2:00 PM',
-    temp: '24 C',
-    cancerRate: 71,
-    cancerLabel: 'Elevated',
-  },
-  {
-    code: 'NT',
-    name: 'Northern Territory',
-    uv: 8.3,
-    risk: 'Very High',
-    summary: 'Strong UV intensity across central and northern regions.',
-    advice: 'Minimise direct sun exposure around midday.',
-    peakTime: '11:00 AM - 2:30 PM',
-    temp: '31 C',
-    cancerRate: 88,
-    cancerLabel: 'High',
-  },
-  {
-    code: 'SA',
-    name: 'South Australia',
-    uv: 5.1,
-    risk: 'Moderate',
-    summary: 'Moderate UV with some higher inland exposure.',
-    advice: 'Basic sun protection is recommended.',
-    peakTime: '11:30 AM - 2:00 PM',
-    temp: '26 C',
-    cancerRate: 67,
-    cancerLabel: 'Elevated',
-  },
-  {
-    code: 'QLD',
-    name: 'Queensland',
-    uv: 8.9,
-    risk: 'Very High',
-    summary: 'Very high UV across much of Queensland.',
-    advice: 'Avoid prolonged sun exposure in peak hours.',
-    peakTime: '10:30 AM - 2:30 PM',
-    temp: '30 C',
-    cancerRate: 96,
-    cancerLabel: 'Very High',
-  },
-  {
-    code: 'NSW',
-    name: 'New South Wales',
-    uv: 3.2,
-    risk: 'Moderate',
-    summary: 'Lower coastal UV, moderate inland UV.',
-    advice: 'Use sunscreen and protective clothing.',
-    peakTime: '11:00 AM - 1:30 PM',
-    temp: '23 C',
-    cancerRate: 61,
-    cancerLabel: 'Moderate',
-  },
-  {
-    code: 'VIC',
-    name: 'Victoria',
-    uv: 2.4,
-    risk: 'Low',
-    summary: 'Relatively lower UV compared to northern states.',
-    advice: 'Light protection is still recommended around noon.',
-    peakTime: '11:30 AM - 1:30 PM',
-    temp: '20 C',
-    cancerRate: 49,
-    cancerLabel: 'Moderate',
-  },
-  {
-    code: 'TAS',
-    name: 'Tasmania',
-    uv: 2.0,
-    risk: 'Low',
-    summary: 'Lower UV conditions overall.',
-    advice: 'Light sun protection is generally enough.',
-    peakTime: '11:30 AM - 1:00 PM',
-    temp: '17 C',
-    cancerRate: 42,
-    cancerLabel: 'Lower',
-  },
-  {
-    code: 'ACT',
-    name: 'Australian Capital Territory',
-    uv: 3.0,
-    risk: 'Moderate',
-    summary: 'Moderate UV conditions in the capital region.',
-    advice: 'Standard UV protection is recommended.',
-    peakTime: '11:30 AM - 1:30 PM',
-    temp: '21 C',
-    cancerRate: 46,
-    cancerLabel: 'Lower',
-  },
-]
-
-const geoFeatures = buildGeoFeaturePaths(australiaStatesGeoJson)
-
-const projectedAct = {
-  centroid: projectCoordinates(149.15, -35.45),
-  lineEnd: projectCoordinates(actAnnotation.lineEnd[0], actAnnotation.lineEnd[1]),
-}
-
-const stateMap = computed(() => {
-  return new Map(stateData.map((state) => [state.code, state]))
-})
-
-const selectedStateData = computed(() => {
-  return stateMap.value.get(selectedState.value) || stateData[0]
-})
-
-const hoveredStateData = computed(() => {
-  return stateMap.value.get(hoveredStateCode.value) || null
-})
-
-const cancerRanking = computed(() => {
-  return [...stateData].sort((a, b) => b.cancerRate - a.cancerRate)
-})
-
-const maxCancerRate = computed(() => {
-  return Math.max(...cancerRanking.value.map((item) => item.cancerRate), 1)
-})
-
-const highestCancerState = computed(() => cancerRanking.value[0])
-
-const averageUv = computed(() => {
-  const total = stateData.reduce((sum, state) => sum + state.uv, 0)
-  return (total / stateData.length).toFixed(1)
-})
-
-const averageCancerRate = computed(() => {
-  const total = stateData.reduce((sum, state) => sum + state.cancerRate, 0)
-  return Math.round(total / stateData.length)
-})
-
-function getUvColor(uv) {
-  if (uv <= 2) return '#1f9d55'
-  if (uv <= 5) return '#f2e94e'
-  if (uv <= 7) return '#f39c34'
-  if (uv <= 10) return '#ef3340'
-  return '#a23fa3'
-}
-
-function getTextColor(uv) {
-  return uv >= 8 ? '#ffffff' : '#17365c'
-}
-
-function getCancerColor(rate) {
-  if (rate < 45) return '#8fd3a8'
-  if (rate < 60) return '#f2e94e'
-  if (rate < 75) return '#f39c34'
-  if (rate < 90) return '#ef3340'
-  return '#a23fa3'
-}
-
-function stateFill(code) {
-  const state = stateMap.value.get(code)
-  if (!state) return '#d8d4ca'
-  return getUvColor(state.uv)
-}
-
-function stateOpacity(code) {
-  if (selectedState.value === code) return 0.96
-  if (hoveredStateCode.value === code) return 0.92
-  return 0.82
-}
-
-function stateStroke(code) {
-  return selectedState.value === code || hoveredStateCode.value === code ? '#17365c' : '#6f695d'
-}
-
-function stateStrokeWidth(code) {
-  return selectedState.value === code || hoveredStateCode.value === code ? 4 : 1.8
-}
-
-function cancerBarWidth(rate) {
-  return `${(rate / maxCancerRate.value) * 100}%`
-}
-
-function selectState(code) {
-  selectedState.value = code
-}
-
-function enterState(code) {
-  hoveredStateCode.value = code
-}
-
-function leaveState() {
-  hoveredStateCode.value = ''
-}
-</script>
-
 <template>
-  <section class="map-page">
-    <div class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">UV Forecast Map</p>
-        <h1>Australia UV map</h1>
-        <p class="lede">
-          State-wise UV view using proper map borders. Hover to preview a state and click to see
-          full details.
+  <div class="map-page">
+    <section class="hero-grid">
+      <div class="hero-card">
+        <p class="eyebrow">REGIONAL CANCER VIEW</p>
+        <h1>Australia Skin Cancer Map</h1>
+        <p class="hero-text">
+          Explore melanoma burden across Australian states and territories.
+          The map uses backend data from your local API, not hardcoded values.
         </p>
       </div>
 
-      <div class="summary-card">
-        <p class="card-title">Map mode</p>
-        <ul>
-          <li><strong>Scope:</strong> State-wise only</li>
-          <li><strong>Map source:</strong> Real border data</li>
-          <li><strong>Interaction:</strong> Hover and click</li>
-        </ul>
+      <div class="hero-card summary-card">
+        <p class="eyebrow">SELECTED REGION</p>
+        <h2>{{ selectedStateName }}</h2>
+        <p class="summary-number">{{ formatRate(selectedStateSummary?.avg_incidence_rate) }}</p>
+        <p class="summary-label">Average incidence rate</p>
+        <p class="summary-subtext">
+          Total cases: {{ formatNumber(selectedStateSummary?.total_cases) }}
+        </p>
       </div>
+    </section>
+
+    <div v-if="loading" class="status-card">
+      <p>Loading map analytics...</p>
     </div>
 
-    <div class="insight-strip">
-      <section class="insight-card">
-        <p class="insight-label">Highest Cancer Burden</p>
-        <h3>{{ highestCancerState.name }}</h3>
-        <p class="insight-value">{{ highestCancerState.cancerRate }} / 100k</p>
-      </section>
-
-      <section class="insight-card">
-        <p class="insight-label">Average UV</p>
-        <h3>Australia-wide</h3>
-        <p class="insight-value">UV {{ averageUv }}</p>
-      </section>
-
-      <section class="insight-card">
-        <p class="insight-label">Average Cancer Burden</p>
-        <h3>Across States</h3>
-        <p class="insight-value">{{ averageCancerRate }} / 100k</p>
-      </section>
+    <div v-else-if="error" class="status-card error-card">
+      <p>{{ error }}</p>
     </div>
 
-    <div class="workspace">
-      <div class="map-column">
-        <div class="map-shell">
-          <div class="map-header">
-            <div>
-              <p class="eyebrow small">Australia Map</p>
-              <h2>Average UV by state</h2>
-            </div>
+    <section v-else class="content-grid">
+      <section class="map-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">INTERACTIVE MAP</p>
+            <h2>State-level melanoma comparison</h2>
           </div>
 
-          <div class="map-board">
-            <svg
-              :viewBox="`0 0 ${mapViewport.width} ${mapViewport.height}`"
-              class="map-svg"
-              aria-label="Australia UV map by state"
-            >
-              <defs>
-                <linearGradient id="oceanFill" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#f5f6f3" />
-                  <stop offset="100%" stop-color="#e4edf3" />
-                </linearGradient>
-              </defs>
-
-              <rect width="100%" height="100%" rx="26" fill="url(#oceanFill)" />
-
-              <g class="states-layer">
-                <path
-                  v-for="feature in geoFeatures"
-                  :key="feature.code"
-                  :d="feature.path"
-                  class="state-shape"
-                  :style="{
-                    fill: stateFill(feature.code),
-                    opacity: stateOpacity(feature.code),
-                    stroke: stateStroke(feature.code),
-                    strokeWidth: stateStrokeWidth(feature.code),
-                  }"
-                  @mouseenter="enterState(feature.code)"
-                  @mouseleave="leaveState"
-                  @click="selectState(feature.code)"
-                />
-
-                <g
-                  v-for="feature in geoFeatures.filter((item) => item.code !== 'ACT' && item.labelPoint)"
-                  :key="`${feature.code}-label`"
-                >
-                  <text
-                    :x="feature.labelPoint.x"
-                    :y="feature.labelPoint.y - 8"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    class="state-code"
-                    :fill="getTextColor(stateMap.get(feature.code)?.uv || 0)"
-                  >
-                    {{ feature.code }}
-                  </text>
-
-                  <text
-                    :x="feature.labelPoint.x"
-                    :y="feature.labelPoint.y + 18"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    class="state-uv"
-                    :fill="getTextColor(stateMap.get(feature.code)?.uv || 0)"
-                  >
-                    UV {{ (stateMap.get(feature.code)?.uv || 0).toFixed(1) }}
-                  </text>
-                </g>
-
-                <line
-                  :x1="projectedAct.centroid.x"
-                  :y1="projectedAct.centroid.y"
-                  :x2="projectedAct.lineEnd.x"
-                  :y2="projectedAct.lineEnd.y"
-                  class="act-line"
-                />
-
-                <g
-                  class="act-label-group"
-                  @mouseenter="enterState('ACT')"
-                  @mouseleave="leaveState"
-                  @click="selectState('ACT')"
-                >
-                  <text
-                    :x="projectedAct.lineEnd.x + 10"
-                    :y="projectedAct.lineEnd.y - 8"
-                    text-anchor="start"
-                    class="state-code act-code"
-                    :fill="getTextColor(stateMap.get('ACT')?.uv || 0)"
-                  >
-                    ACT
-                  </text>
-
-                  <text
-                    :x="projectedAct.lineEnd.x + 10"
-                    :y="projectedAct.lineEnd.y + 16"
-                    text-anchor="start"
-                    class="state-uv act-uv"
-                    :fill="getTextColor(stateMap.get('ACT')?.uv || 0)"
-                  >
-                    UV {{ (stateMap.get('ACT')?.uv || 0).toFixed(1) }}
-                  </text>
-                </g>
-
-                <g v-if="hoveredStateData" class="hover-box">
-                  <rect x="655" y="70" width="255" height="142" rx="18" fill="rgba(17, 44, 73, 0.94)" />
-                  <text x="676" y="100" class="hover-title">
-                    {{ hoveredStateData.name }}
-                  </text>
-                  <text x="676" y="126" class="hover-copy">
-                    Code: {{ hoveredStateData.code }}
-                  </text>
-                  <text x="676" y="150" class="hover-copy">
-                    UV: {{ hoveredStateData.uv.toFixed(1) }} | {{ hoveredStateData.risk }}
-                  </text>
-                  <text x="676" y="174" class="hover-copy">
-                    Peak: {{ hoveredStateData.peakTime }}
-                  </text>
-                  <text x="676" y="198" class="hover-copy">
-                    Cancer: {{ hoveredStateData.cancerRate }} / 100k
-                  </text>
-                </g>
-
-                <g class="legend-box">
-                  <text x="820" y="255" class="legend-title">UV Index</text>
-
-                  <g v-for="(item, index) in uvLegend" :key="item.label">
-                    <rect :x="835" :y="275 + index * 34" width="18" height="26" :fill="item.color" />
-                    <text :x="865" :y="293 + index * 34" class="legend-text">
-                      {{ item.label }}
-                    </text>
-                    <text :x="930" :y="293 + index * 34" class="legend-range">
-                      {{ item.range }}
-                    </text>
-                  </g>
-                </g>
-              </g>
-            </svg>
+          <div class="control-box">
+            <label for="state-select">Choose state</label>
+            <select id="state-select" v-model="selectedState" @change="handleStateSelect(selectedState)">
+              <option v-for="item in stateOptions" :key="item.code" :value="item.code">
+                {{ item.code }} - {{ item.name }}
+              </option>
+            </select>
           </div>
         </div>
 
-        <section class="panel cancer-panel">
-          <div class="panel-head">
-            <p class="panel-label">Region-wise cancer burden</p>
-            <span class="micro">Indicative skin cancer cases per 100,000 people</span>
-          </div>
+        <div class="map-shell">
+          <svg
+            class="map-svg"
+            :viewBox="`0 0 ${mapViewport.width} ${mapViewport.height}`"
+            role="img"
+            aria-label="Australia melanoma map"
+          >
+            <g>
+              <path
+                v-for="feature in featurePaths"
+                :key="feature.code"
+                :d="feature.path"
+                class="state-path"
+                :class="{
+                  selected: selectedState === feature.code,
+                  hovered: hoveredStateCode === feature.code
+                }"
+                :fill="getStateFill(feature.code)"
+                @mouseenter="hoveredStateCode = feature.code"
+                @mouseleave="hoveredStateCode = ''"
+                @click="handleStateSelect(feature.code)"
+              />
+            </g>
 
-          <div class="cancer-chart">
-            <div
-              v-for="item in cancerRanking"
-              :key="item.code"
-              class="cancer-row"
-              @click="selectState(item.code)"
+            <g
+              v-for="feature in featurePaths"
+              :key="`${feature.code}-label`"
             >
-              <div class="cancer-row-head">
-                <div class="cancer-state">
-                  <strong>{{ item.name }}</strong>
-                  <span>{{ item.code }}</span>
-                </div>
-                <div class="cancer-meta">
-                  <strong>{{ item.cancerRate }}</strong>
-                  <span>{{ item.cancerLabel }}</span>
-                </div>
-              </div>
+              <template v-if="feature.labelPoint && feature.code !== 'ACT'">
+                <text
+                  :x="feature.labelPoint.x"
+                  :y="feature.labelPoint.y - 10"
+                  class="state-label"
+                >
+                  {{ feature.code }}
+                </text>
+                <text
+                  :x="feature.labelPoint.x"
+                  :y="feature.labelPoint.y + 16"
+                  class="state-value"
+                >
+                  {{ formatShortRate(stateStatsMap.get(feature.code)?.avg_incidence_rate) }}
+                </text>
+              </template>
+            </g>
 
-              <div class="cancer-track">
-                <div
-                  class="cancer-fill"
-                  :style="{
-                    width: cancerBarWidth(item.cancerRate),
-                    background: getCancerColor(item.cancerRate),
-                  }"
-                ></div>
-              </div>
+            <g v-if="actPoint">
+              <circle :cx="actPoint.x" :cy="actPoint.y" r="7" class="act-dot" />
+              <text :x="actPoint.x + 14" :y="actPoint.y - 10" class="state-label">ACT</text>
+              <text :x="actPoint.x + 14" :y="actPoint.y + 16" class="state-value">
+                {{ formatShortRate(stateStatsMap.get('ACT')?.avg_incidence_rate) }}
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="legend-panel">
+          <div class="legend-item" v-for="item in legendItems" :key="item.label">
+            <span class="legend-swatch" :style="{ background: item.color }"></span>
+            <span>{{ item.label }}</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-column">
+        <section class="info-card">
+          <p class="eyebrow">STATE DETAILS</p>
+          <h3>{{ selectedStateName }}</h3>
+          <div class="metric-grid">
+            <div class="metric-box">
+              <span class="metric-label">Avg incidence</span>
+              <strong>{{ formatRate(selectedStateSummary?.avg_incidence_rate) }}</strong>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">Total cases</span>
+              <strong>{{ formatNumber(selectedStateSummary?.total_cases) }}</strong>
             </div>
           </div>
 
-          <p class="prediction-note">
-            This chart compares estimated regional skin cancer burden. Click any row to sync the
-            state details on the right panel.
-          </p>
-        </section>
-      </div>
-
-      <aside class="details-column">
-        <section class="panel spotlight">
-          <p class="panel-label">Selected state</p>
-          <h2>{{ selectedStateData.name }}</h2>
-          <p class="big-metric">UV {{ selectedStateData.uv.toFixed(1) }}</p>
-          <p class="risk">{{ selectedStateData.risk }}</p>
-
-          <div class="detail-grid">
-            <div class="info-box">
-              <span>State Code</span>
-              <strong>{{ selectedStateData.code }}</strong>
-            </div>
-            <div class="info-box">
-              <span>Peak Time</span>
-              <strong>{{ selectedStateData.peakTime }}</strong>
-            </div>
-            <div class="info-box">
-              <span>Temperature</span>
-              <strong>{{ selectedStateData.temp }}</strong>
-            </div>
-            <div class="info-box">
-              <span>Cancer Burden</span>
-              <strong>{{ selectedStateData.cancerRate }} / 100k</strong>
-            </div>
-          </div>
-
-          <div class="description-box">
-            <p><strong>Summary:</strong> {{ selectedStateData.summary }}</p>
-            <p><strong>Advice:</strong> {{ selectedStateData.advice }}</p>
-            <p><strong>Cancer Risk Level:</strong> {{ selectedStateData.cancerLabel }}</p>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head">
-            <p class="panel-label">Legend</p>
-            <span class="micro">UV classification</span>
-          </div>
-
-          <div class="legend-list">
-            <div v-for="item in uvLegend" :key="item.label" class="legend-row">
-              <div class="legend-left">
-                <span class="legend-dot" :style="{ background: item.color }"></span>
-                <span>{{ item.label }}</span>
-              </div>
-              <strong>{{ item.range }}</strong>
-            </div>
+          <div class="details-table-wrap">
+            <table class="details-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Cases</th>
+                  <th>Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in selectedStateDetails" :key="`${row.state}-${row.year}`">
+                  <td>{{ row.year }}</td>
+                  <td>{{ formatNumber(row.cases) }}</td>
+                  <td>{{ formatRate(row.age_standardised_rate) }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
-        <section class="panel note-panel">
-          <div class="panel-head">
-            <p class="panel-label">Quick note</p>
-            <span class="micro">Interpretation</span>
+        <section class="info-card">
+          <p class="eyebrow">COMPARISON SNAPSHOT</p>
+          <h3>Latest available year</h3>
+          <div class="comparison-list">
+            <div
+              v-for="row in latestComparisonRows"
+              :key="`${row.state}-${row.year}`"
+              class="comparison-row"
+            >
+              <div>
+                <strong>{{ stateCodeFromName(row.state) }}</strong>
+                <p>{{ row.state }}</p>
+              </div>
+              <div class="comparison-right">
+                <span>{{ formatNumber(row.cases) }} cases</span>
+                <strong>{{ formatRate(row.age_standardised_rate) }}</strong>
+              </div>
+            </div>
           </div>
-          <p class="note-text">
-            Higher UV regions generally align with higher long-term skin cancer burden, but this
-            panel shows indicative regional burden only, not live clinical diagnoses.
-          </p>
         </section>
       </aside>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
+
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import { actAnnotation, australiaStatesGeoJson } from '../lib/australiaStatesGeoJson'
+import { buildGeoFeaturePaths, mapViewport, projectCoordinates, stateCodeFromName } from '../lib/uvMapModel'
+import { getMapStates, getMapStateDetails, getMapComparison } from '../lib/api'
+
+const hoveredStateCode = ref('')
+const selectedState = ref('VIC')
+const loading = ref(true)
+const error = ref('')
+
+const stateStats = ref([])
+const comparisonRows = ref([])
+const selectedStateDetails = ref([])
+
+const featurePaths = buildGeoFeaturePaths(australiaStatesGeoJson)
+
+const stateOptions = [
+  { code: 'NSW', name: 'New South Wales' },
+  { code: 'VIC', name: 'Victoria' },
+  { code: 'QLD', name: 'Queensland' },
+  { code: 'SA', name: 'South Australia' },
+  { code: 'WA', name: 'Western Australia' },
+  { code: 'TAS', name: 'Tasmania' },
+  { code: 'NT', name: 'Northern Territory' },
+  { code: 'ACT', name: 'Australian Capital Territory' }
+]
+
+const stateStatsMap = computed(() => {
+  return new Map(
+    stateStats.value.map((row) => [stateCodeFromName(row.state), row])
+  )
+})
+
+const selectedStateSummary = computed(() => stateStatsMap.value.get(selectedState.value) || null)
+
+const selectedStateName = computed(() => {
+  const found = stateOptions.find((item) => item.code === selectedState.value)
+  return found ? found.name : selectedState.value
+})
+
+const latestComparisonRows = computed(() => {
+  if (!comparisonRows.value.length) return []
+
+  const latestYear = Math.max(...comparisonRows.value.map((row) => Number(row.year) || 0))
+  return comparisonRows.value
+    .filter((row) => Number(row.year) === latestYear)
+    .sort((a, b) => (Number(b.age_standardised_rate) || 0) - (Number(a.age_standardised_rate) || 0))
+})
+
+const actPoint = computed(() => {
+  if (!actAnnotation) return null
+  return projectCoordinates(actAnnotation.longitude, actAnnotation.latitude)
+})
+
+const legendItems = [
+  { label: 'Very low', color: '#dbeafe' },
+  { label: 'Low', color: '#93c5fd' },
+  { label: 'Moderate', color: '#60a5fa' },
+  { label: 'High', color: '#2563eb' },
+  { label: 'Very high', color: '#1d4ed8' }
+]
+
+function getStateFill(code) {
+  const rate = Number(stateStatsMap.value.get(code)?.avg_incidence_rate)
+
+  if (!Number.isFinite(rate)) return '#e5e7eb'
+  if (rate < 40) return '#dbeafe'
+  if (rate < 55) return '#93c5fd'
+  if (rate < 70) return '#60a5fa'
+  if (rate < 85) return '#2563eb'
+  return '#1d4ed8'
+}
+
+async function handleStateSelect(code) {
+  selectedState.value = code
+  try {
+    selectedStateDetails.value = await getMapStateDetails(code)
+  } catch (err) {
+    console.error(err)
+    error.value = 'Failed to load state details.'
+  }
+}
+
+function formatRate(value) {
+  const num = Number(value)
+  return Number.isFinite(num) ? num.toFixed(2) : '--'
+}
+
+function formatShortRate(value) {
+  const num = Number(value)
+  return Number.isFinite(num) ? num.toFixed(1) : '--'
+}
+
+function formatNumber(value) {
+  const num = Number(value)
+  return Number.isFinite(num) ? num.toLocaleString() : '--'
+}
+
+onMounted(async () => {
+  try {
+    const [states, comparison] = await Promise.all([
+      getMapStates(),
+      getMapComparison()
+    ])
+
+    stateStats.value = Array.isArray(states) ? states : []
+    comparisonRows.value = Array.isArray(comparison) ? comparison : []
+    selectedStateDetails.value = await getMapStateDetails(selectedState.value)
+  } catch (err) {
+    console.error(err)
+    error.value = 'Failed to load map analytics.'
+  } finally {
+    loading.value = false
+  }
+})
+</script>
 
 <style scoped>
 .map-page {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 36px 24px 60px;
   min-height: 100vh;
-  padding: 2rem;
-  background:
-    radial-gradient(circle at top left, rgba(244, 230, 201, 0.45), transparent 28%),
-    linear-gradient(135deg, #f8f7f3 0%, #edf5fb 100%);
-  color: #17365c;
+  background: linear-gradient(180deg, #f8f5ec 0%, #f4efe3 100%);
 }
 
-.hero {
+.hero-grid {
   display: grid;
-  grid-template-columns: 1.7fr 0.9fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: start;
+  grid-template-columns: 1.5fr 0.85fr;
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
-.hero-copy h1 {
-  font-size: clamp(2.6rem, 6vw, 4.4rem);
-  line-height: 0.95;
-  margin: 0.35rem 0 0.7rem;
-  color: #102f54;
+.hero-card,
+.map-card,
+.info-card,
+.status-card {
+  background: #fdf9f0;
+  border: 1px solid #e6d9bf;
+  border-radius: 28px;
+  box-shadow: 0 14px 34px rgba(31, 47, 86, 0.05);
+}
+
+.hero-card {
+  padding: 32px;
 }
 
 .eyebrow {
   margin: 0;
-  font-size: 0.92rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #d86236;
-  font-weight: 800;
-}
-
-.eyebrow.small {
-  font-size: 0.8rem;
-}
-
-.lede {
-  margin: 0;
-  max-width: 48rem;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: #4b6788;
-}
-
-.summary-card,
-.map-shell,
-.panel,
-.insight-card {
-  background: rgba(255, 251, 245, 0.9);
-  border: 1px solid rgba(194, 183, 156, 0.65);
-  border-radius: 1.4rem;
-  box-shadow: 0 10px 28px rgba(16, 47, 84, 0.08);
-}
-
-.summary-card {
-  padding: 1.2rem;
-}
-
-.summary-card ul {
-  margin: 0;
-  padding-left: 1.1rem;
-  line-height: 1.8;
-  color: #496683;
-}
-
-.card-title,
-.panel-label,
-.insight-label {
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
+  color: #df6a3b;
+  font-size: 0.82rem;
   letter-spacing: 0.16em;
-  color: #d86236;
-  font-weight: 800;
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
-.insight-strip {
+.hero-card h1,
+.hero-card h2,
+.card-header h2,
+.info-card h3 {
+  color: #1f3d73;
+  margin: 10px 0 12px;
+}
+
+.hero-card h1 {
+  font-size: 2.8rem;
+  line-height: 1.05;
+  font-weight: 500;
+}
+
+.hero-text,
+.summary-label,
+.summary-subtext,
+.comparison-row p {
+  color: #4d6288;
+  line-height: 1.7;
+}
+
+.summary-number {
+  margin: 8px 0 4px;
+  font-size: 3rem;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.content-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: 1.35fr 0.8fr;
+  gap: 24px;
 }
 
-.insight-card {
-  padding: 1rem 1.1rem;
+.map-card,
+.info-card {
+  padding: 28px;
 }
 
-.insight-card h3 {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-  color: #102f54;
-}
-
-.insight-value {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 900;
-  color: #d86236;
-}
-
-.workspace {
-  display: grid;
-  grid-template-columns: 1.55fr 0.95fr;
-  gap: 1rem;
-  align-items: start;
-}
-
-.map-column {
+.card-header {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.control-box {
+  min-width: 220px;
+}
+
+.control-box label {
+  display: block;
+  margin-bottom: 8px;
+  color: #1f3d73;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.control-box select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e6d9bf;
+  border-radius: 14px;
+  background: #fffdf7;
+  color: #1f3d73;
 }
 
 .map-shell {
-  padding: 1rem;
-}
-
-.map-header h2 {
-  margin: 0.2rem 0 0;
-  font-size: 1.08rem;
-  color: #17365c;
-}
-
-.map-board {
-  margin-top: 0.6rem;
+  background: #fffdf7;
+  border: 1px solid #eadfc7;
+  border-radius: 22px;
+  padding: 16px;
 }
 
 .map-svg {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 1rem;
 }
 
-.state-shape {
+.state-path {
+  stroke: #f8f5ec;
+  stroke-width: 2;
   cursor: pointer;
-  stroke-linejoin: round;
-  transition: opacity 0.18s ease, stroke-width 0.18s ease, transform 0.18s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
 }
 
-.state-shape:hover {
-  opacity: 0.95;
+.state-path:hover,
+.state-path.hovered {
+  opacity: 0.88;
+  filter: brightness(1.03);
 }
 
-.state-code {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 0.05em;
-  pointer-events: none;
+.state-path.selected {
+  stroke: #1f3d73;
+  stroke-width: 4;
 }
 
-.state-uv {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  pointer-events: none;
-}
-
-.act-code {
+.state-label {
+  fill: #1f3d73;
   font-size: 18px;
-  pointer-events: none;
-}
-
-.act-uv {
-  pointer-events: none;
-}
-
-.act-label-group {
-  cursor: pointer;
-}
-
-.act-line {
-  stroke: rgba(16, 42, 67, 0.75);
-  stroke-width: 3;
-}
-
-.hover-title {
-  fill: #ffffff;
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.hover-copy {
-  fill: rgba(255, 255, 255, 0.88);
-  font-size: 17px;
-}
-
-.legend-title {
-  fill: #17365c;
-  font-size: 18px;
-  font-weight: 800;
-}
-
-.legend-text,
-.legend-range {
-  fill: #17365c;
-  font-size: 16px;
-}
-
-.cancer-panel {
-  padding: 1.1rem;
-}
-
-.cancer-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  margin-top: 0.6rem;
-}
-
-.cancer-row {
-  padding: 0.85rem 0.95rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.55);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  cursor: pointer;
-}
-
-.cancer-row:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 47, 84, 0.08);
-}
-
-.cancer-row-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.6rem;
-}
-
-.cancer-state,
-.cancer-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.cancer-state strong,
-.cancer-meta strong {
-  color: #17365c;
-}
-
-.cancer-state span,
-.cancer-meta span {
-  font-size: 0.82rem;
-  color: #55728f;
   font-weight: 700;
+  text-anchor: middle;
 }
 
-.cancer-meta {
-  text-align: right;
+.state-value {
+  fill: #4d6288;
+  font-size: 16px;
+  font-weight: 600;
+  text-anchor: middle;
 }
 
-.cancer-track {
-  width: 100%;
-  height: 14px;
-  border-radius: 999px;
-  background: rgba(192, 204, 216, 0.42);
-  overflow: hidden;
+.act-dot {
+  fill: #1f3d73;
 }
 
-.cancer-fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.25s ease;
-}
-
-.prediction-note {
-  margin: 0.9rem 0 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: #55728f;
-}
-
-.details-column {
+.legend-panel {
   display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-top: 18px;
 }
 
-.panel {
-  padding: 1.1rem;
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1f3d73;
+  font-size: 0.92rem;
 }
 
-.spotlight h2 {
-  margin: 0 0 0.3rem;
-  font-size: 1.6rem;
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1px solid rgba(31, 61, 115, 0.12);
 }
 
-.big-metric {
-  margin: 0.2rem 0;
-  font-size: 2rem;
-  font-weight: 900;
-  color: #102f54;
+.side-column {
+  display: grid;
+  gap: 24px;
 }
 
-.risk {
-  margin: 0 0 0.9rem;
-  color: #d86236;
-  font-weight: 800;
-}
-
-.detail-grid {
+.metric-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.7rem;
-  margin-bottom: 0.9rem;
+  gap: 14px;
+  margin: 14px 0 20px;
 }
 
-.info-box {
-  background: rgba(255, 255, 255, 0.58);
-  border-radius: 0.9rem;
-  padding: 0.8rem;
+.metric-box {
+  padding: 16px;
+  background: #fffdf7;
+  border: 1px solid #eadfc7;
+  border-radius: 18px;
 }
 
-.info-box span {
+.metric-label {
   display: block;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #6c84a1;
-  margin-bottom: 0.2rem;
+  color: #4d6288;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
 }
 
-.info-box strong {
-  color: #17365c;
+.metric-box strong {
+  color: #1f3d73;
+  font-size: 1.2rem;
 }
 
-.description-box {
-  background: rgba(255, 255, 255, 0.55);
-  border-radius: 0.9rem;
-  padding: 0.9rem;
-  line-height: 1.6;
-  color: #476380;
+.details-table-wrap {
+  max-height: 360px;
+  overflow: auto;
+  border: 1px solid #eadfc7;
+  border-radius: 18px;
+  background: #fffdf7;
 }
 
-.description-box p {
-  margin: 0 0 0.55rem;
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.description-box p:last-child {
-  margin-bottom: 0;
+.details-table th,
+.details-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #f0e7d6;
 }
 
-.panel-head {
+.details-table th {
+  position: sticky;
+  top: 0;
+  background: #fff7ea;
+  color: #1f3d73;
+}
+
+.comparison-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.comparison-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid #eadfc7;
+  border-radius: 16px;
+  background: #fffdf7;
 }
 
-.micro {
-  font-size: 0.82rem;
-  color: #55728f;
-  font-weight: 700;
+.comparison-row p {
+  margin: 4px 0 0;
+  font-size: 0.92rem;
 }
 
-.legend-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+.comparison-right {
+  text-align: right;
+  color: #1f3d73;
+  display: grid;
+  gap: 4px;
 }
 
-.legend-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.55);
-  padding: 0.8rem 0.9rem;
-  border-radius: 0.9rem;
+.status-card {
+  padding: 24px;
+  text-align: center;
+  color: #1f3d73;
 }
 
-.legend-left {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.legend-dot {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 999px;
-  display: inline-block;
-}
-
-.note-panel {
-  background: linear-gradient(135deg, rgba(255, 251, 245, 0.95), rgba(243, 246, 251, 0.95));
-}
-
-.note-text {
-  margin: 0;
-  line-height: 1.65;
-  color: #476380;
+.error-card {
+  border-color: #e3b8b8;
+  color: #9f2f2f;
+  background: #fff5f5;
 }
 
 @media (max-width: 1100px) {
-  .hero,
-  .workspace,
-  .insight-strip {
+  .hero-grid,
+  .content-grid {
     grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .map-page {
-    padding: 1rem;
+    padding: 24px 16px 40px;
   }
 
-  .detail-grid {
+  .hero-card h1 {
+    font-size: 2.2rem;
+  }
+
+  .metric-grid {
     grid-template-columns: 1fr;
-  }
-
-  .state-code {
-    font-size: 18px;
-  }
-
-  .state-uv {
-    font-size: 12px;
-  }
-
-  .cancer-row-head {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .cancer-meta {
-    text-align: left;
   }
 }
 </style>

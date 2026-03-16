@@ -63,9 +63,10 @@
         <section class="insight-card">
           <p class="eyebrow">KEY INSIGHT</p>
           <p class="insight-text">
-            Melanoma incidence in Australia has increased over time due to high UV exposure. 
-            Although mortality has remained relatively stable thanks to improved detection and treatment, prevention remains essential. 
-            Building safe sun habits early can significantly reduce long-term skin cancer risk.
+            Melanoma incidence in Australia has increased over time due to high UV exposure.
+            Although mortality has remained relatively stable thanks to improved detection and treatment,
+            prevention remains essential. Building safe sun habits early can significantly reduce long-term
+            skin cancer risk.
           </p>
         </section>
       </div>
@@ -93,8 +94,7 @@
             <p class="myth-text">Sunscreen is only needed at the beach.</p>
             <p class="fact-label">Fact</p>
             <p class="fact-text">
-              UV exposure happens whenever you are outdoors, even during daily
-              activities.
+              UV exposure happens whenever you are outdoors, even during daily activities.
             </p>
           </div>
 
@@ -121,7 +121,6 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import Papa from 'papaparse'
 import {
   Chart as ChartJS,
   Title,
@@ -134,6 +133,7 @@ import {
   LinearScale
 } from 'chart.js'
 import { Line, Bar } from 'vue-chartjs'
+import { getCancerTrends, getCancerAgeGroups } from '../lib/api'
 
 ChartJS.register(
   Title,
@@ -146,86 +146,86 @@ ChartJS.register(
   LinearScale
 )
 
-const incidenceData = ref([])
-const mortalityData = ref([])
 const loading = ref(true)
 const error = ref('')
-
-const incidenceCsv =
-  '../../filtered_datasets/aihw-can-122-CDiA-2023-Book-1a-Cancer-incidence-age-standardised-rates-5-year-age-groups__melanoma_of_the_skin.csv'
-
-const mortalityCsv =
-  '../../filtered_datasets/aihw-can-122-CDiA-2023-Book-2a-Cancer-mortality-and-age-standardised-rates-by-age-5-year-groups__melanoma_of_the_skin.csv'
-
-function loadCSV(path) {
-  return new Promise((resolve, reject) => {
-    Papa.parse(path, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => resolve(results.data),
-      error: (err) => reject(err)
-    })
-  })
-}
+const trendRows = ref([])
+const ageRows = ref([])
 
 onMounted(async () => {
   try {
-    const [incidence, mortality] = await Promise.all([
-      loadCSV(incidenceCsv),
-      loadCSV(mortalityCsv)
+    const [trends, ages] = await Promise.all([
+      getCancerTrends(),
+      getCancerAgeGroups()
     ])
 
-    incidenceData.value = incidence
-    mortalityData.value = mortality
+    trendRows.value = Array.isArray(trends) ? trends : []
+    ageRows.value = Array.isArray(ages) ? ages : []
   } catch (e) {
     console.error(e)
-    error.value = 'Failed to load data.'
+    error.value = 'Failed to load cancer analytics data.'
   } finally {
     loading.value = false
   }
 })
 
-const RATE = 'Age-specific rate (per 100,000)'
-const AGE = 'Age group (years)'
-const SEX = 'Sex'
-const YEAR = 'Year'
+const ageOrder = [
+  '00–04',
+  '05–09',
+  '10–14',
+  '15–19',
+  '20–24',
+  '25–29',
+  '30–34',
+  '35–39',
+  '40–44',
+  '45–49',
+  '50–54',
+  '55–59',
+  '60–64',
+  '65–69',
+  '70–74',
+  '75–79',
+  '80–84',
+  '85–89',
+  '90+'
+]
 
-const lineData = computed(() => {
-  const incidence = incidenceData.value
-    .filter((r) => r[AGE] === 'All ages combined' && r[SEX] === 'Persons')
-    .sort((a, b) => Number(a[YEAR]) - Number(b[YEAR]))
-
-  const mortality = mortalityData.value
-    .filter((r) => r[AGE] === 'All ages combined' && r[SEX] === 'Persons')
-    .sort((a, b) => Number(a[YEAR]) - Number(b[YEAR]))
-
-  return {
-    labels: incidence.map((r) => r[YEAR]),
-    datasets: [
-      {
-        label: 'Incidence',
-        data: incidence.map((r) => Number(r[RATE]) || 0),
-        borderColor: '#e36a3a',
-        backgroundColor: '#e36a3a',
-        borderWidth: 3,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        tension: 0.35
-      },
-      {
-        label: 'Mortality',
-        data: mortality.map((r) => Number(r[RATE]) || 0),
-        borderColor: '#1f3d73',
-        backgroundColor: '#1f3d73',
-        borderWidth: 3,
-        pointRadius: 2,
-        pointHoverRadius: 4,
-        tension: 0.35
-      }
-    ]
-  }
+const sortedAgeRows = computed(() => {
+  return [...ageRows.value].sort((a, b) => {
+    const aIndex = ageOrder.indexOf(a.age_group)
+    const bIndex = ageOrder.indexOf(b.age_group)
+    if (aIndex === -1 && bIndex === -1) return String(a.age_group).localeCompare(String(b.age_group))
+    if (aIndex === -1) return 1
+    if (bIndex === -1) return -1
+    return aIndex - bIndex
+  })
 })
+
+const lineData = computed(() => ({
+  labels: trendRows.value.map((row) => row.year),
+  datasets: [
+    {
+      label: 'Incidence',
+      data: trendRows.value.map((row) => Number(row.incidence_rate) || 0),
+      borderColor: '#e36a3a',
+      backgroundColor: '#e36a3a',
+      borderWidth: 3,
+      pointRadius: 2,
+      pointHoverRadius: 4,
+      tension: 0.35
+    },
+    {
+      label: 'Mortality',
+      data: trendRows.value.map((row) => Number(row.mortality_rate) || 0),
+      borderColor: '#1f3d73',
+      backgroundColor: '#1f3d73',
+      borderWidth: 3,
+      pointRadius: 2,
+      pointHoverRadius: 4,
+      tension: 0.35
+    }
+  ]
+}))
 
 const lineOptions = {
   responsive: true,
@@ -289,56 +289,19 @@ const lineOptions = {
   }
 }
 
-const ageOrder = [
-  '00–04',
-  '05–09',
-  '10–14',
-  '15–19',
-  '20–24',
-  '25–29',
-  '30–34',
-  '35–39',
-  '40–44',
-  '45–49',
-  '50–54',
-  '55–59',
-  '60–64',
-  '65–69',
-  '70–74',
-  '75–79',
-  '80–84',
-  '85–89',
-  '90+'
-]
-
-const barData = computed(() => {
-  const latestYear = Math.max(
-    ...incidenceData.value.map((r) => Number(r[YEAR])).filter((n) => !Number.isNaN(n))
-  )
-
-  const rows = incidenceData.value
-    .filter(
-      (r) =>
-        Number(r[YEAR]) === latestYear &&
-        r[SEX] === 'Persons' &&
-        ageOrder.includes(r[AGE])
-    )
-    .sort((a, b) => ageOrder.indexOf(a[AGE]) - ageOrder.indexOf(b[AGE]))
-
-  return {
-    labels: rows.map((r) => r[AGE]),
-    datasets: [
-      {
-        label: 'Incidence rate',
-        data: rows.map((r) => Number(r[RATE]) || 0),
-        backgroundColor: '#f0b84b',
-        borderRadius: 8,
-        borderSkipped: false,
-        maxBarThickness: 28
-      }
-    ]
-  }
-})
+const barData = computed(() => ({
+  labels: sortedAgeRows.value.map((row) => row.age_group),
+  datasets: [
+    {
+      label: 'Incidence rate',
+      data: sortedAgeRows.value.map((row) => Number(row.incidence_rate) || 0),
+      backgroundColor: '#f0b84b',
+      borderRadius: 8,
+      borderSkipped: false,
+      maxBarThickness: 28
+    }
+  ]
+}))
 
 const barOptions = {
   responsive: true,
@@ -404,15 +367,15 @@ const barOptions = {
   grid-template-columns: 1.5fr 0.9fr;
   gap: 24px;
   align-items: stretch;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .hero-left,
 .hero-summary,
 .chart-card,
 .insight-card,
-.status-card,
-.sidebar-card {
+.sidebar-card,
+.status-card {
   background: #fdf9f0;
   border: 1px solid #e6d9bf;
   border-radius: 28px;
@@ -420,86 +383,87 @@ const barOptions = {
 }
 
 .hero-left {
-  padding: 36px;
+  padding: 32px;
+}
+
+.hero-left h1 {
+  margin: 10px 0 14px;
+  font-size: 2.9rem;
+  line-height: 1.05;
+  color: #1f3d73;
+  font-weight: 500;
+}
+
+.hero-text {
+  margin: 0;
+  max-width: 780px;
+  color: #4d6288;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .hero-summary {
   padding: 28px;
 }
 
-.hero-summary ul {
-  margin: 14px 0 0;
-  padding-left: 20px;
-  color: #607395;
-  line-height: 1.9;
-}
-
-.eyebrow,
-.card-label {
-  margin: 0 0 8px;
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  color: #df6a3b;
-  text-transform: uppercase;
-}
-
-.hero-left h1 {
-  margin: 0 0 14px;
-  font-size: 3.4rem;
-  line-height: 1;
-  color: #1f3d73;
-}
-
-.hero-text {
+.card-label,
+.eyebrow {
   margin: 0;
-  max-width: 720px;
-  color: #5f7394;
-  font-size: 1.08rem;
+  color: #df6a3b;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.hero-summary ul {
+  margin: 18px 0 0;
+  padding-left: 18px;
+  color: #1f2f56;
   line-height: 1.8;
 }
 
 .content-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.5fr 0.75fr;
   gap: 24px;
-  align-items: start;
 }
 
 .charts-column {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 24px;
 }
 
 .chart-card,
 .insight-card,
-.status-card,
 .sidebar-card {
   padding: 28px;
 }
 
-.card-header {
-  margin-bottom: 18px;
-}
-
 .card-header h2 {
-  margin: 0 0 10px;
-  font-size: 2rem;
+  margin: 10px 0 10px;
   color: #1f3d73;
-  line-height: 1.12;
+  font-size: 1.45rem;
+  font-weight: 600;
 }
 
-.card-description {
-  margin: 0;
-  color: #607395;
+.card-description,
+.sidebar-intro,
+.fact-text,
+.myth-text,
+.insight-text,
+.tip-text {
+  color: #4d6288;
   line-height: 1.7;
-  max-width: 760px;
 }
 
 .chart-wrap {
-  position: relative;
   height: 360px;
+  margin-top: 18px;
+}
+
+.insight-text {
+  margin-top: 12px;
 }
 
 .sidebar-sticky {
@@ -508,78 +472,61 @@ const barOptions = {
 }
 
 .sidebar-card h3 {
-  margin: 0 0 10px;
-  font-size: 1.8rem;
+  margin: 10px 0;
   color: #1f3d73;
-}
-
-.sidebar-intro {
-  margin: 0 0 20px;
-  color: #607395;
-  line-height: 1.7;
+  font-size: 1.35rem;
 }
 
 .myth-item {
-  padding: 16px 0;
-  border-top: 1px solid #eadfca;
-}
-
-.myth-item:first-of-type {
-  border-top: none;
-  padding-top: 4px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #eadfc7;
+  border-radius: 18px;
+  background: #fffdf7;
 }
 
 .myth-label,
-.fact-label {
+.fact-label,
+.tip-title {
   margin: 0 0 6px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.myth-label {
-  color: #df6a3b;
-}
-
-.fact-label {
   color: #1f3d73;
-  margin-top: 12px;
+  text-transform: uppercase;
 }
 
 .myth-text,
 .fact-text {
   margin: 0;
-  color: #5f7394;
-  line-height: 1.7;
+}
+
+.fact-label {
+  margin-top: 12px;
+  color: #df6a3b;
 }
 
 .tip-box {
-  margin-top: 20px;
+  margin-top: 18px;
   padding: 18px;
   border-radius: 18px;
-  background: #fff5de;
-  border: 1px solid #f0ddb0;
+  background: linear-gradient(135deg, #fff4e5, #fffaf2);
+  border: 1px solid #f0d6b2;
 }
 
-.tip-title {
-  margin: 0 0 8px;
-  font-weight: 700;
+.status-card {
+  padding: 24px;
+  text-align: center;
   color: #1f3d73;
 }
 
-.tip-text,
-.insight-text {
-  margin: 0;
-  color: #5f7394;
-  line-height: 1.8;
-}
-
 .error-card {
-  border-color: #efb5b5;
+  border-color: #e3b8b8;
+  color: #9f2f2f;
+  background: #fff5f5;
 }
 
 @media (max-width: 1100px) {
+  .hero-section,
   .content-grid {
     grid-template-columns: 1fr;
   }
@@ -589,38 +536,13 @@ const barOptions = {
   }
 }
 
-@media (max-width: 980px) {
-  .hero-section {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-left h1 {
-    font-size: 2.8rem;
-  }
-}
-
 @media (max-width: 768px) {
   .awareness-page {
     padding: 24px 16px 40px;
   }
 
-  .hero-left,
-  .hero-summary,
-  .chart-card,
-  .insight-card,
-  .status-card,
-  .sidebar-card {
-    border-radius: 22px;
-    padding: 22px;
-  }
-
   .hero-left h1 {
-    font-size: 2.3rem;
-  }
-
-  .card-header h2,
-  .sidebar-card h3 {
-    font-size: 1.45rem;
+    font-size: 2.2rem;
   }
 
   .chart-wrap {
