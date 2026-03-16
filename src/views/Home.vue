@@ -1,7 +1,7 @@
 <template>
   <div class="home-page">
     <div class="top-bar">
-      <h1 class="page-title">Sun Safety Dashboard</h1>
+      <h1 class="page-title">UV Shield</h1>
 
       <div class="search-box">
         <label class="search-label">Location Type</label>
