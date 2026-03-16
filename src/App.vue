@@ -1,11 +1,12 @@
 <template>
   <div class="app-shell">
 
+    <!-- NAVBAR -->
     <header class="navbar">
 
       <!-- Logo + Title -->
       <router-link to="/" class="logo-section">
-        <div class="logo-box"></div>
+        <img src="@/assets/logo.png" class="logo-image" />
         <div class="logo-text">
           <span>Sun</span>
           <span>Safety</span>
@@ -22,7 +23,8 @@
 
     </header>
 
-    <main>
+    <!-- PAGE CONTENT -->
+    <main class="page-container">
       <RouterView />
     </main>
 
@@ -35,9 +37,13 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 
+/* PAGE */
+
 .app-shell{
   min-height:100vh;
   background:#f8f5ec;
+  display:flex;
+  flex-direction:column;
 }
 
 /* NAVBAR */
@@ -46,9 +52,9 @@ import { RouterLink, RouterView } from 'vue-router'
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:24px 40px;
+  padding:22px 40px;
   background:#fdf9f0;
-  border-bottom:2px solid #000;
+  border-bottom:2px solid #111;
 }
 
 /* LOGO */
@@ -56,49 +62,78 @@ import { RouterLink, RouterView } from 'vue-router'
 .logo-section{
   display:flex;
   align-items:center;
-  gap:18px;
+  gap:14px;
   text-decoration:none;
-  color:#000;
+  color:#111;
 }
 
-.logo-box{
-  width:40px;
-  height:40px;
-  border:3px solid #000;
-  border-radius:6px;
-  transform:rotate(-8deg);
+.logo-image{
+  width:44px;
+  height:44px;
+  object-fit:contain;
 }
 
 .logo-text{
   display:flex;
   flex-direction:column;
-  font-size:28px;
+  font-size:24px;
   font-weight:700;
   line-height:1;
 }
 
-/* NAV LINKS */
+/* NAVIGATION */
 
 .nav-menu{
   display:flex;
-  gap:40px;
+  align-items:center;
+  gap:42px;
 }
 
 .nav-item{
   text-decoration:none;
-  color:#000;
+  color:#111;
   font-size:20px;
   font-weight:600;
   padding-bottom:4px;
   border-bottom:3px solid transparent;
+  transition:all 0.2s ease;
+}
+
+.nav-item:hover{
+  color:#1f3d73;
 }
 
 .nav-item.router-link-active{
   border-bottom:3px solid #53c7b4;
+  color:#1f3d73;
 }
 
-main{
-  padding:20px;
+/* PAGE CONTENT */
+
+.page-container{
+  flex:1;
+}
+
+/* RESPONSIVE */
+
+@media (max-width:900px){
+
+  .navbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:18px;
+    padding:20px;
+  }
+
+  .nav-menu{
+    gap:22px;
+    flex-wrap:wrap;
+  }
+
+  .nav-item{
+    font-size:18px;
+  }
+
 }
 
 </style>
