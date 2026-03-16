@@ -51,9 +51,38 @@
 
     <div class="section-card">
       <h3>Today's 24-Hour UV Index</h3>
-      <div class="chart-wrapper" v-if="chartData">
-        <Line :data="chartData" :options="chartOptions" />
+
+      <div class="chart-row" v-if="chartData">
+        <div class="chart-wrapper">
+          <Line :data="chartData" :options="chartOptions" />
+        </div>
+
+        <div class="legend-card">
+          <div class="legend-header">
+            <span class="legend-heading">Legend</span>
+            <span class="legend-subtitle">UV classification</span>
+          </div>
+
+          <div class="legend-list">
+            <div
+              v-for="item in uvLegend"
+              :key="item.label"
+              class="legend-row"
+            >
+              <div class="legend-left">
+                <span
+                  class="legend-dot"
+                  :style="{ backgroundColor: item.color }"
+                ></span>
+                <span class="legend-label">{{ item.label }}</span>
+              </div>
+
+              <span class="legend-range">{{ item.range }}</span>
+            </div>
+          </div>
+        </div>
       </div>
+
       <p v-else class="status-text">Loading chart...</p>
     </div>
 
@@ -125,6 +154,14 @@ const hourlyUvValues = ref([])
 const loading = ref(false)
 const error = ref('')
 
+const uvLegend = [
+  { label: 'Low', range: '0–2', color: '#1f9d55' },
+  { label: 'Moderate', range: '3–5', color: '#f2e94e' },
+  { label: 'High', range: '6–7', color: '#f39c34' },
+  { label: 'Very High', range: '8–10', color: '#ef3340' },
+  { label: 'Extreme', range: '11+', color: '#a23fa3' }
+]
+
 const uvLevel = computed(() => getUvLevel(currentUv.value))
 const uvCardClass = computed(() => uvLevel.value.className)
 
@@ -158,7 +195,7 @@ const chartOptions = {
     },
     tooltip: {
       callbacks: {
-        label: function (context) {
+        label(context) {
           return `UV Index: ${Number(context.raw).toFixed(2)}`
         }
       }
@@ -408,106 +445,82 @@ onMounted(() => {
 
 <style scoped>
 .home-page {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
   min-height: 100vh;
-  padding: 36px 40px 48px;
-  background:
-    radial-gradient(circle at top left, #fff8d6 0%, #fffbea 35%, #f8fbff 100%);
+  padding: 36px 24px 60px;
+  background: linear-gradient(180deg, #f8f5ec 0%, #f4efe3 100%);
   box-sizing: border-box;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #1f2937;
+  font-family: "DM Sans", sans-serif;
+  color: #1f3d73;
 }
 
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 28px;
-  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.page-title,
+.search-box,
+.section-card {
+  background: #fdf9f0;
+  border: 1px solid #e6d9bf;
+  border-radius: 28px;
+  box-shadow: 0 14px 34px rgba(31, 47, 86, 0.05);
 }
 
 .page-title {
+  padding: 36px;
   margin: 0;
-  font-size: 36px;
-  line-height: 1.15;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #1e293b;
-  text-align: left;
+  font-size: 3rem;
+  font-weight: 500;
+  color: #1f3d73;
 }
 
 .search-box {
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  min-width: 320px;
   gap: 12px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(10px);
 }
 
 .search-label {
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 2px;
-  color: #64748b;
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: #df6a3b;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  text-align: left;
 }
 
 .location-select,
 .location-input {
-  width: 100%;
   padding: 14px 16px;
-  border: 1px solid #dbe3ee;
-  border-radius: 14px;
-  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e6d9bf;
+  background: #fffdf7;
   font-size: 15px;
-  font-weight: 500;
-  color: #1f2937;
+  font-weight: 400;
+  color: #1f3d73;
   outline: none;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+  font-family: inherit;
 }
 
 .location-select:focus,
 .location-input:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
-}
-
-.location-input::placeholder {
-  color: #94a3b8;
+  border-color: #df6a3b;
+  box-shadow: 0 0 0 4px rgba(223,106,59,.12);
 }
 
 .search-button {
-  width: 100%;
-  padding: 14px 18px;
+  padding: 14px;
   border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 55%, #60a5fa 100%);
-  color: white;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  border-radius: 16px;
+  background: #df6a3b;
+  color: #fff;
+  font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-.search-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 26px rgba(37, 99, 235, 0.34);
-}
-
-.search-button:active {
-  transform: translateY(0);
-  opacity: 0.95;
+  font-family: inherit;
 }
 
 .uv-card {
@@ -515,278 +528,222 @@ onMounted(() => {
   justify-content: space-between;
   gap: 32px;
   padding: 32px;
-  border-radius: 26px;
-  margin-bottom: 30px;
-  color: #1f2937;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(6px);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.uv-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.14);
-}
-
-.uv-left,
-.uv-right {
-  flex: 1;
-}
-
-.uv-left {
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  border-radius: 28px;
+  margin-bottom: 28px;
+  border: 1px solid #e6d9bf;
 }
 
 .uv-left h2 {
   margin: 0;
-  font-size: 30px;
-  font-weight: 800;
-  line-height: 1.2;
-  color: #0f172a;
-  word-break: break-word;
-}
-
-.uv-right {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 500;
+  color: #1f3d73;
 }
 
 .small-label {
-  font-size: 12px;
-  font-weight: 800;
+  font-size: .85rem;
+  letter-spacing: .16em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  opacity: 0.75;
-  margin-bottom: 10px;
+  font-weight: 600;
+  color: #607395;
 }
 
 .uv-value {
-  font-size: 76px;
-  line-height: 1;
-  margin: 10px 0 12px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: 4.8rem;
+  margin: 10px 0;
+  font-weight: 500;
+  color: #1f3d73;
 }
 
 .uv-level {
-  font-size: 24px;
-  font-weight: 800;
-  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: #1f3d73;
 }
 
-.uv-advice {
-  margin-top: 10px;
-  font-size: 16px;
-  line-height: 1.55;
-  color: #334155;
-}
-
+.uv-advice,
 .updated-time {
-  margin-top: 12px;
-  color: #475569;
-  font-size: 14px;
-  line-height: 1.45;
+  color: #607395;
+  font-weight: 400;
+  line-height: 1.7;
 }
 
 .section-card {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 24px;
-  padding: 26px;
-  margin-bottom: 30px;
-  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-sizing: border-box;
-}
-
-.section-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+  padding: 28px;
+  margin-bottom: 24px;
 }
 
 .section-card h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: 800;
-  color: #1e293b;
-  text-align: left;
-  letter-spacing: -0.01em;
+  font-size: 1.9rem;
+  margin-bottom: 18px;
+  font-weight: 500;
+  color: #1f3d73;
+}
+
+.chart-row {
+  display: flex;
+  gap: 24px;
 }
 
 .chart-wrapper {
-  height: 420px;
-  padding: 8px 4px 4px;
+  flex: 1;
+  height: 360px;
+}
+
+.legend-card {
+  width: 320px;
+  background: #fdf9f0;
+  border: 1px solid #e6d9bf;
+  border-radius: 24px;
+  padding: 22px;
+}
+
+.legend-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.legend-heading {
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: #df6a3b;
+  text-transform: uppercase;
+}
+
+.legend-subtitle {
+  font-size: .9rem;
+  font-weight: 500;
+  color: #607395;
+}
+
+.legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fffdf7;
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid #eee3cf;
+}
+
+.legend-left {
+  font-weight: 400;
+}
+
+.legend-label,
+.legend-range {
+  font-weight: 400;
+  color: #1f3d73;
 }
 
 .table-wrapper {
-  overflow-x: auto;
   border-radius: 18px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #eadfca;
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #ffffff;
-  overflow: hidden;
+  background: #fffdf7;
 }
 
 th,
 td {
   padding: 16px 14px;
-  text-align: left;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid #efe6d7;
   font-size: 15px;
+  font-weight: 400;
+  color: #607395;
+  text-align: center;
 }
 
 th {
-  background: linear-gradient(180deg, #fff7cf 0%, #fff0a8 100%);
-  color: #334155;
-  font-weight: 800;
-  font-size: 14px;
+  background: #fff5de;
+  color: #1f3d73;
+  font-size: .8rem;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-tbody tr {
-  transition: background-color 0.18s ease;
-}
-
-tbody tr:hover {
-  background-color: #f8fbff;
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
+  font-weight: 600;
 }
 
 .status-text {
-  color: #475569;
-  margin-top: 14px;
-  text-align: left;
-  font-size: 15px;
-  font-weight: 500;
+  margin-top: 12px;
+  color: #607395;
 }
 
 .error-text {
-  color: #b91c1c;
-  background: #fff1f2;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid #fecdd3;
+  background: #fff3f1;
+  border: 1px solid #efc3bd;
+  border-radius: 16px;
+  padding: 14px;
+  color: #b94a48;
 }
 
 .uv-low {
-  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  background: linear-gradient(135deg,#e5f6e8,#d5efd9);
 }
 
 .uv-moderate {
-  background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%);
+  background: linear-gradient(135deg,#fff7d6,#f8ecaa);
 }
 
 .uv-high {
-  background: linear-gradient(135deg, #ffedd5 0%, #fdba74 100%);
+  background: linear-gradient(135deg,#ffe9d5,#f5c48f);
 }
 
 .uv-very-high {
-  background: linear-gradient(135deg, #ffe4e6 0%, #fda4af 100%);
+  background: linear-gradient(135deg,#ffdfe2,#f5b5bb);
 }
 
 .uv-extreme {
-  background: linear-gradient(135deg, #ede9fe 0%, #c4b5fd 100%);
+  background: linear-gradient(135deg,#eee4ff,#d3bef4);
 }
 
-.uv-unknown {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+@media (max-width:1100px){
+
+.top-bar{
+grid-template-columns:1fr;
 }
 
-@media (max-width: 992px) {
-  .top-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .search-box {
-    min-width: unset;
-    width: 100%;
-  }
-
-  .uv-card {
-    flex-direction: column;
-  }
-
-  .uv-right {
-    text-align: left;
-  }
-
-  .uv-value {
-    font-size: 64px;
-  }
+.chart-row{
+flex-direction:column;
 }
 
-@media (max-width: 768px) {
-  .home-page {
-    padding: 24px 18px 34px;
-  }
-
-  .page-title {
-    font-size: 30px;
-  }
-
-  .search-box {
-    padding: 16px;
-    border-radius: 18px;
-  }
-
-  .uv-card,
-  .section-card {
-    padding: 20px;
-    border-radius: 20px;
-  }
-
-  .uv-left h2 {
-    font-size: 24px;
-  }
-
-  .uv-value {
-    font-size: 56px;
-  }
-
-  .uv-level {
-    font-size: 20px;
-  }
-
-  .chart-wrapper {
-    height: 320px;
-  }
-
-  th,
-  td {
-    padding: 13px 10px;
-    font-size: 14px;
-  }
+.legend-card{
+width:100%;
 }
 
-@media (max-width: 480px) {
-  .page-title {
-    font-size: 26px;
-  }
+}
 
-  .uv-value {
-    font-size: 48px;
-  }
+@media (max-width:768px){
 
-  .section-card h3 {
-    font-size: 20px;
-  }
+.home-page{
+padding:24px 16px 40px;
+}
+
+.page-title,
+.search-box,
+.section-card,
+.legend-card{
+border-radius:22px;
+}
+
+.page-title{
+font-size:2.4rem;
+}
+
+.chart-wrapper{
+height:300px;
+}
+
 }
 </style>
