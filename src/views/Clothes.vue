@@ -102,44 +102,13 @@ function getUvLevel(uv) {
   const value = Number(uv)
 
   if (!Number.isFinite(value)) {
-    return {
-      label: 'Unknown',
-      className: 'uv-unknown'
-    }
+    return { label: 'Unknown', className: 'uv-unknown' }
   }
-
-  if (value <= 2) {
-    return {
-      label: 'Low',
-      className: 'uv-low'
-    }
-  }
-
-  if (value <= 5) {
-    return {
-      label: 'Moderate',
-      className: 'uv-moderate'
-    }
-  }
-
-  if (value <= 7) {
-    return {
-      label: 'High',
-      className: 'uv-high'
-    }
-  }
-
-  if (value <= 10) {
-    return {
-      label: 'Very High',
-      className: 'uv-very-high'
-    }
-  }
-
-  return {
-    label: 'Extreme',
-    className: 'uv-extreme'
-  }
+  if (value <= 2) return { label: 'Low', className: 'uv-low' }
+  if (value <= 5) return { label: 'Moderate', className: 'uv-moderate' }
+  if (value <= 7) return { label: 'High', className: 'uv-high' }
+  if (value <= 10) return { label: 'Very High', className: 'uv-very-high' }
+  return { label: 'Extreme', className: 'uv-extreme' }
 }
 
 function getClothingAdvice(uv) {
@@ -154,60 +123,34 @@ function getClothingAdvice(uv) {
 
   if (value <= 2) {
     return {
-      items: [
-        'Regular T-shirt is fine',
-        'Cap optional',
-        'Sunglasses optional'
-      ],
+      items: ['Regular T-shirt is fine', 'Cap optional', 'Sunglasses optional'],
       note: 'Low UV. Basic clothing is usually enough.'
     }
   }
 
   if (value <= 5) {
     return {
-      items: [
-        'T-shirt or light full-sleeve shirt',
-        'Hat recommended',
-        'Sunglasses recommended',
-        'Apply sunscreen'
-      ],
+      items: ['T-shirt or light full-sleeve shirt', 'Hat recommended', 'Sunglasses recommended', 'Apply sunscreen'],
       note: 'Moderate UV. Use normal outdoor protection.'
     }
   }
 
   if (value <= 7) {
     return {
-      items: [
-        'Light long-sleeve shirt preferred',
-        'Wide-brim hat',
-        'UV-protective sunglasses',
-        'Apply SPF 30+ or SPF 50+ sunscreen'
-      ],
+      items: ['Light long-sleeve shirt preferred', 'Wide-brim hat', 'UV-protective sunglasses', 'Apply SPF 30+ or SPF 50+ sunscreen'],
       note: 'High UV. Reduce direct sun exposure during peak hours.'
     }
   }
 
   if (value <= 10) {
     return {
-      items: [
-        'Long sleeves strongly recommended',
-        'Wide-brim hat',
-        'Sunglasses',
-        'SPF 50+ sunscreen',
-        'Seek shade whenever possible'
-      ],
+      items: ['Long sleeves strongly recommended', 'Wide-brim hat', 'Sunglasses', 'SPF 50+ sunscreen', 'Seek shade whenever possible'],
       note: 'Very high UV. Strong sun protection is needed.'
     }
   }
 
   return {
-    items: [
-      'Full sleeve clothing recommended',
-      'Wide-brim hat',
-      'UV sunglasses',
-      'SPF 50+ sunscreen',
-      'Avoid direct outdoor exposure if possible'
-    ],
+    items: ['Full sleeve clothing recommended', 'Wide-brim hat', 'UV sunglasses', 'SPF 50+ sunscreen', 'Avoid direct outdoor exposure if possible'],
     note: 'Extreme UV. Limit outdoor exposure and stay protected.'
   }
 }
@@ -269,9 +212,7 @@ async function searchLocation(query) {
   try {
     const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query + ', Australia')}`
     const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json'
-      }
+      headers: { Accept: 'application/json' }
     })
 
     if (!response.ok) {
@@ -286,7 +227,6 @@ async function searchLocation(query) {
 
     const place = data[0]
     locationName.value = place.display_name
-
     await fetchUv(Number(place.lat), Number(place.lon))
   } catch (err) {
     error.value = err.message || 'Failed to search location.'
