@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import LaunchPage from '../views/LaunchPage.vue'
 import Home from '../views/Home.vue'
 import Map from '../views/Map.vue'
 import Awareness from '../views/Awareness.vue'
@@ -11,6 +12,12 @@ const router = createRouter({
 
     {
       path: '/',
+      name: 'Launch',
+      component: LaunchPage
+    },
+
+    {
+      path: '/home',
       name: 'Home',
       component: Home
     },
